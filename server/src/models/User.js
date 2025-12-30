@@ -2,12 +2,18 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    email: { type: String, required: true, unique: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
+      },
     password: { type: String, required: true },
 
     age: { type: Number, required: true },
-    height: { type: Number, required: true }, // cm
-    weight: { type: Number, required: true }, // kg
+    height: { type: Number, required: true }, 
+    weight: { type: Number, required: true }, 
     gender: { type: String, enum: ["male", "female", "other"] },
 
     primaryGoal: {

@@ -1,14 +1,22 @@
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
+
 function App() {
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Noor AI</h1>
-      <div >
-      <Register />
-    </div>
-    </div>
+    <BrowserRouter>
+     
+      <h1
+        style={{textAlign:"center"}}>Noor AI</h1>
+
+      <Routes>
+        <Route path="/" element={<Register />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;
+

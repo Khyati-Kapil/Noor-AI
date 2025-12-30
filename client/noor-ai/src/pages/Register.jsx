@@ -1,7 +1,11 @@
 import { useState } from "react";
-
+import axios from "axios";
+import "../styles/auth.css";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    name: "", 
     email: "",
     password: "",
     age: "",
@@ -15,12 +19,65 @@ const Register = () => {
     hairType: "",
     hairConcerns: []
   });
+  
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [apiMessage, setApiMessage] = useState("");
+  const [calories, setCalories] = useState(null);
+
+  const validate = () => {
+    const newErrors = {};
+
+    
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (
+      !formData.email.includes("@") ||
+      !formData.email.includes(".") ||
+      formData.email.indexOf("@") > formData.email.lastIndexOf(".")
+    ) {
+      newErrors.email = "Enter a valid email";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    if (!formData.age || Number(formData.age) <= 0) {
+      newErrors.age = "Enter a valid age";
+    }
+
+    if (!formData.height || Number(formData.height) <= 0) {
+      newErrors.height = "Enter a valid height";
+    }
+
+    if (!formData.weight || Number(formData.weight) <= 0) {
+      newErrors.weight = "Enter a valid weight";
+    }
+
+    if (!formData.primaryGoal) {
+      newErrors.primaryGoal = "Select a goal";
+    }
+
+    if (!formData.activityLevel) {
+      newErrors.activityLevel = "Select activity level";
+    }
+
+    return newErrors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -28,115 +85,218 @@ const Register = () => {
     const { value, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [type]: checked ? [...prev[type], value]: prev[type].filter((v) => v !== value),
+      [type]: checked
+        ? [...prev[type], value]
+        : prev[type].filter((v) => v !== value)
     }));
   };
 
-  const handleSubmit=(e)=>{
-    e.preventDefault()
-    console.log("Register:",formData)
-    alert("Form submitted Successfully");
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+    setApiMessage("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/auth/register",
+        formData
+      );
+      setCalories(response.data.dailyCalories);
+      setApiMessage("Registration successful!");
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        setApiMessage("User already exists. Try logging in.");
+      } else {
+        setApiMessage("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
-    <form onSubmit={handleSubmit}>
-        <label>Email</label>
-        <input name="email" value ={formData.email} onChange={handleChange} />
-        <label>Password</label>
-        <input type="password" name="password" value={formData.password} onChange={handleChange} />
-        <label>Age</label>
-        <input name="age" value={formData.age} onChange={handleChange} />
-        <label>Height (cm)</label>
-        <input name="height" value={formData.height} onChange={handleChange} />
-        <label>Weight (kg)</label>
-        <input name="weight" value={formData.weight} onChange={handleChange} />
-        <label>Gender</label>
-        <select name ="gender" value={formData.gender} onChange={handleChange}>
-            <option value="">Select</option>
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="other">Other</option>
-        </select>
-        <label>Primary Goal</label>
-        <select
-          name="primaryGoal"
-          value={formData.primaryGoal}
-          onChange={handleChange}>
-          <option value="">Select</option>
-          <option value="gain">Weight Gain</option>
-          <option value="loss">Weight Loss</option>
-          <option value="maintain">Maintain</option>
-          <option value="skin">Improve Skin</option>
-          <option value="hair">Improve Hair</option>
-          <option value="wellness">Overall Wellness</option>
-        </select>
+      <div className="register-container">
+        <h1 className="page-brand auth-page-brand">Noor AI</h1>
+        <form className="glass-card" onSubmit={handleSubmit}>
+        <div className="glow-border"></div>
+        <h2 className="title">YOUR JOURNEY STARTS HERE!</h2>
 
-        <label>Activity Level</label>
-        <select
-          name="activityLevel"
-          value={formData.activityLevel}
-          onChange={handleChange}
-        >
-          <option value="">Select</option>
-          <option value="light">Light</option>
-          <option value="moderate">Moderate</option>
-          <option value="active">Active</option>
-        </select>
+        <div className="section-row">
+          <div className="glass-section account-bg">
+            <span className="section-label">ACCOUNT INFO</span>
+            <div className="input-flex">
+             
+              <input 
+                name="name" 
+                placeholder="Full Name" 
+                value={formData.name} 
+                onChange={handleChange} 
+              />
+              {errors.name && <p className="error-text">{errors.name}</p>} 
 
-        <label>Skin Type</label>
-        <select
-          name="skinType"
-          value={formData.skinType}
-          onChange={handleChange}
-        >
-          <option value="">Select</option>
-          <option value="dry">Dry</option>
-          <option value="oily">Oily</option>
-          <option value="combination">Combination</option>
-          <option value="normal">Normal</option>
-        </select>
-
-        <label>Skin Concerns</label>
-        {["acne", "pigmentation", "dullness", "wrinkles","redness","others"].map((c) => (
-          <div key={c}>
-            <input type="checkbox" value={c} onChange={(e) => handleCheckboxChange(e, "skinConcerns")}/>
-            {c}
+              <input 
+                name="email" 
+                placeholder="Email" 
+                value={formData.email} 
+                onChange={handleChange} 
+              />
+              {errors.email && <p className="error-text">{errors.email}</p>}
+              
+              <input 
+                type="password" 
+                name="password" 
+                placeholder="Password" 
+                value={formData.password} 
+                onChange={handleChange} 
+              />
+              {errors.password && <p className="error-text">{errors.password}</p>}
+            </div>
           </div>
-        ))}
+        </div>
 
-        <label>Hair Type</label>
-        <select 
-            name="hairType"
-            value={formData.hairType}
-            onChange={handleChange} >
-         <option value="">Select</option>
-          <option value="dry">Dry</option>
-          <option value="oily">Oily</option>
-          <option value="normal">Normal</option>
-          <option value="combination">Combination</option>
-        </select>
-       
-        <label>Hair Concerns</label>
-        {["hair fall", "dandruff", "frizz", "slow growth"].map((c) => (
-          <div key={c}>
-            <input
-              type="checkbox"
-              value={c}
-              onChange={(e) => handleCheckboxChange(e, "hairConcerns")}
-            />
-            {c}
+        <div className="section-row">
+          <div className="glass-section pink-bg">
+            <span className="section-label">ABOUT YOU</span>
+            <div className="input-grid">
+              <input name="age" placeholder="Age" value={formData.age} onChange={handleChange} />
+              <input name="height" placeholder="Height (cm)" value={formData.height} onChange={handleChange} />
+              <select name="gender" value={formData.gender} onChange={handleChange} className="full-span">
+                <option value="">Select Gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            {(errors.age || errors.height) && <p className="error-text">Check Age/Height</p>}
           </div>
-        ))}
 
-    <button type="submit" style={{ marginTop: "1rem" }}>
-          Register
+          <div className="glass-section purple-bg">
+            <span className="section-label">WELLNESS GOALS</span>
+            <div className="input-grid">
+              <input name="weight" placeholder="Weight (kg)" value={formData.weight} onChange={handleChange} />
+              <input placeholder="Target Weight" />
+              <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="full-span">
+                <option value="">Activity Level</option>
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="active">Active</option>
+              </select>
+            </div>
+            {errors.weight && <p className="error-text">{errors.weight}</p>}
+            {errors.activityLevel && <p className="error-text">{errors.activityLevel}</p>}
+          </div>
+        </div>
+
+        <div className="section-row">
+          <div className="glass-section yellow-bg">
+            <span className="section-label">SKIN ANALYSIS</span>
+            <div className="analysis-flex">
+              <label className="field-title">Skin Type</label>
+              <select name="skinType" value={formData.skinType} onChange={handleChange}>
+                <option value="">Select</option>
+                <option value="dry">Dry</option>
+                <option value="oily">Oily</option>
+                <option value="combination">Combination</option>
+                <option value="normal">Normal</option>
+              </select>
+              <label className="field-title">Skin Concerns</label>
+              <div className="checkbox-row">
+                {["acne", "pigmentation", "dullness", "wrinkles", "redness", "others"].map((c) => (
+                  <label key={c} className="check-item">
+                    <input 
+                      type="checkbox" 
+                      value={c} 
+                      checked={formData.skinConcerns.includes(c)}
+                      onChange={(e) => handleCheckboxChange(e, "skinConcerns")} 
+                    />
+                    <span className="checkmark"></span>
+                    <span className="check-text">{c}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="glass-section blue-bg">
+            <span className="section-label">HAIR ANALYSIS</span>
+            <div className="analysis-flex">
+              <label className="field-title">Hair Type</label>
+              <select name="hairType" value={formData.hairType} onChange={handleChange}>
+                <option value="">Select</option>
+                <option value="dry">Dry</option>
+                <option value="oily">Oily</option>
+                <option value="normal">Normal</option>
+                <option value="combination">Combination</option>
+              </select>
+              <label className="field-title">Hair Concerns</label>
+              <div className="checkbox-row">
+                {["hair fall", "dandruff", "frizz", "slow growth"].map((c) => (
+                  <label key={c} className="check-item">
+                    <input 
+                      type="checkbox" 
+                      value={c} 
+                      checked={formData.hairConcerns.includes(c)}
+                      onChange={(e) => handleCheckboxChange(e, "hairConcerns")} 
+                    />
+                    <span className="checkmark"></span>
+                    <span className="check-text">{c}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section-row">
+          <div className="glass-section account-bg full-width">
+            <span className="section-label">PRIMARY GOAL</span>
+            <select name="primaryGoal" value={formData.primaryGoal} onChange={handleChange}>
+              <option value="">Select</option>
+              <option value="gain">Weight Gain</option>
+              <option value="loss">Weight Loss</option>
+              <option value="maintain">Maintain</option>
+              <option value="skin">Improve Skin</option>
+              <option value="hair">Improve Hair</option>
+              <option value="wellness">Overall Wellness</option>
+            </select>
+            {errors.primaryGoal && <p className="error-text">{errors.primaryGoal}</p>}
+          </div>
+        </div>
+
+        <button type="submit" className="next-btn" disabled={loading}>
+          {loading ? "Registering..." : "NEXT STEP"}
         </button>
+        <p className="login-option">
+  Already have an account?
+  <span
+    className="login-link"
+    onClick={() => navigate("/login")}
+  >
+    Login
+  </span>
+</p>
+
+        {apiMessage && <p className="api-message-text">{apiMessage}</p>}
+
+        {calories && (
+          <div className="calories-result">
+            <h3>Your estimated daily calories</h3>
+            <strong>{calories} kcal</strong>
+          </div>
+        )}
       </form>
-      
-
+    </div>
     </>
-  )
-
-}
+  );
+};
 
 export default Register;
