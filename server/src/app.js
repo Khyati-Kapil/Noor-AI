@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 
@@ -14,5 +17,6 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/ai", aiRoutes);
 
 export default app;
