@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Flame, Weight, Activity, Utensils, Sparkles, Droplets, Camera, Send } from 'lucide-react';
 import capybaraImg from '../assets/capybara.png';
 import api from "../api/axios";
+import { safeGet } from "../utils/safeStorage.js";
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
@@ -18,7 +19,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = safeGet('token');
         if (!token) {
           setLoading(false);
           return;
