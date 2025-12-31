@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -111,6 +112,7 @@ const Register = () => {
       );
       setCalories(response.data.dailyCalories);
       setApiMessage("Registration successful!");
+      navigate("/dashboard");
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setApiMessage("User already exists. Try logging in.");
@@ -123,18 +125,14 @@ const Register = () => {
   };
 
   return (
-    <>
-      <div className="register-container">
-        <h1 className="page-brand auth-page-brand">Noor AI</h1>
-        <form className="glass-card" onSubmit={handleSubmit}>
-        <div className="glow-border"></div>
+    <div className="register-container">
+      <form className="glass-card" onSubmit={handleSubmit}>
         <h2 className="title">YOUR JOURNEY STARTS HERE!</h2>
 
         <div className="section-row">
           <div className="glass-section account-bg">
             <span className="section-label">ACCOUNT INFO</span>
             <div className="input-flex">
-             
               <input 
                 name="name" 
                 placeholder="Full Name" 
@@ -276,14 +274,14 @@ const Register = () => {
           {loading ? "Registering..." : "NEXT STEP"}
         </button>
         <p className="login-option">
-  Already have an account?
-  <span
-    className="login-link"
-    onClick={() => navigate("/login")}
-  >
-    Login
-  </span>
-</p>
+          Already have an account?
+          <span
+            className="login-link"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </span>
+        </p>
 
         {apiMessage && <p className="api-message-text">{apiMessage}</p>}
 
@@ -295,8 +293,8 @@ const Register = () => {
         )}
       </form>
     </div>
-    </>
   );
 };
 
 export default Register;
+
