@@ -126,5 +126,6 @@ router.post("/analyze-meal", async (req, res) => {
   }
 });
 
+
 export default router;
 

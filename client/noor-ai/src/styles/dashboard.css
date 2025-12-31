@@ -10,6 +10,7 @@
   gap: 20px;
 }
 
+
 .dashboard-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;

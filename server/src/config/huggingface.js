@@ -10,3 +10,4 @@ export const hfClient = axios.create({
   },
   timeout: 20000
 });
+

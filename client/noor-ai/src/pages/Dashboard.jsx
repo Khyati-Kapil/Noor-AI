@@ -15,7 +15,6 @@ const Dashboard = () => {
   const [loadingMeal, setLoadingMeal] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
-  // Fetch user profile data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -62,7 +61,7 @@ const Dashboard = () => {
       const res = await api.post("/ai/analyze-meal", { mealText });
       setMealResult(res.data.analysis);
 
-      // Add calories to consumed total if available
+      
       if (res.data.calories) {
         setConsumedCalories(prev => prev + res.data.calories);
       }
@@ -88,7 +87,7 @@ const Dashboard = () => {
     }
   };
 
-  // Calculate percentage of daily goal
+
   const caloriePercentage = userData?.dailyCalories 
     ? Math.round((consumedCalories / userData.dailyCalories) * 100)
     : 0;
