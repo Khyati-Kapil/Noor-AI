@@ -1,8 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios.js";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
-import { safeSet } from "../utils/safeStorage.js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,13 +16,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      await api.post("/auth/login", {
         email: email.trim().toLowerCase(),
         password,
       });
 
-      const token = response.data.token;
-      safeSet("token", token);
       navigate("/dashboard");
 
     } catch (err) {

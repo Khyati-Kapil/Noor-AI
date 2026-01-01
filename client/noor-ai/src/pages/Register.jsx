@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api/axios.js";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
 
@@ -106,8 +106,8 @@ const Register = () => {
     setApiMessage("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/auth/register",
+      const response = await api.post(
+        "/auth/register",
         formData
       );
       setCalories(response.data.dailyCalories);

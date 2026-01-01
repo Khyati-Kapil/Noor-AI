@@ -79,23 +79,25 @@ router.post("/analyze-meal", async (req, res) => {
     console.log("Analyzing meal:", mealText);
 
     try {
-      const prompt = `Question: How many calories are in ${mealText}? Answer with just the number.`;
-
+      // Try using a different model that's known to work well
       const response = await hfClient.post(
-        "/models/google/flan-t5-small",
+        "/models/google/flan-t5-base",
         {
-          inputs: prompt,
+          inputs: `How many calories are in ${mealText}? Give only the number.`,
           parameters: {
-            max_new_tokens: 50,
-            temperature: 0.1
+            max_new_tokens: 10,
+            temperature: 0.1,
+            do_sample: false
           }
         }
       );
 
       const output = response.data?.[0]?.generated_text || response.data?.generated_text || "";
+      console.log("HF Response:", output);
+
       const calories = output.match(/\d+/) ? parseInt(output.match(/\d+/)[0]) : null;
 
-      if (calories && calories > 0) {
+      if (calories && calories > 0 && calories < 5000) {
         return res.json({
           success: true,
           analysis: `Meal: ${mealText}\nEstimated Calories: ${calories} kcal`,
@@ -103,7 +105,7 @@ router.post("/analyze-meal", async (req, res) => {
         });
       }
     } catch (hfError) {
-      console.log("HF API failed, using basic estimation:", hfError.message);
+      console.log("HF API failed, using basic estimation:", hfError.response?.data || hfError.message);
     }
 
   
