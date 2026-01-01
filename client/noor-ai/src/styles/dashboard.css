@@ -1,7 +1,8 @@
 
 .noor-dashboard-root {
   background-image: none !important;
-  width: 180vh !important;
+  width: 100% !important;
+  max-width: 100%;
 }
 
 .dashboard-grid-3 {
@@ -207,4 +208,94 @@
   font-size: 1.5rem;
   margin-bottom: 20px;
   color: #4a3728;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .dashboard-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .noor-dashboard-root {
+    padding: 20px 15px !important;
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 20px;
+  }
+
+  .meal-card {
+    padding: 20px;
+  }
+
+  .chat-card {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .noor-dashboard-root {
+    padding: 15px 10px !important;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .meal-card {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .chat-card {
+    padding: 15px;
+    border-radius: 16px;
+  }
+
+  .btn-primary {
+    padding: 10px 20px;
+    width: 100%;
+  }
+
+  .btn-secondary {
+    padding: 10px 15px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .chat-welcome {
+    flex-direction: column;
+  }
+
+  .chat-welcome img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .suggestions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .suggestion-pill {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: #f5f3f0;
+    border-radius: 8px;
+  }
 }
