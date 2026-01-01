@@ -39,8 +39,7 @@
     bottom: -10%;
     right: -10%;
   }
-  
-  /* Header */
+
   .landing-header {
     display: flex;
     justify-content: space-between;
@@ -68,7 +67,6 @@
     font-family: serif;
   }
   
-  /* Main Layout - Only for landing page */
   .landing-page main {
     position: relative;
     z-index: 1;
@@ -178,7 +176,182 @@
     margin: 0 auto 20px;
     color: var(--noor-accent);
   }
+
+  .landing-samples {
+    padding: 80px 0;
+    text-align: center;
+  }
+  .samples-container {
+    background: linear-gradient(
+      309deg,
+      rgba(102, 62, 17, 1) 13%,
+      rgb(255, 229, 199) 59%,
+      rgb(249, 225, 209) 100%
+    );
+    border-radius: 32px;
+    padding: 50px;
+    max-width: 900px;
+    margin: 0 auto;
   
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.8),
+      0 0 20px rgb(194, 128, 52);
+  }
+  
+
+  .samples-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .sample-card {
+    background: var(--noor-card-bg);
+    padding: 30px;
+    border-radius: 24px;
+    border: 1px solid var(--noor-border);
+    text-align: left;
+    transition: transform 0.3s ease;
+  }
+
+  .sample-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .sample-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .sample-icon {
+    width: 40px;
+    height: 40px;
+    background: #fdfbf7;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--noor-accent);
+  }
+
+  .sample-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--noor-brown);
+  }
+
+  .sample-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .routine-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--noor-light-brown);
+    line-height: 1.4;
+  }
+
+  .routine-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--noor-accent);
+    font-style: italic;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fdfbf7;
+    border-radius: 8px;
+  }
+
+  .dashboard-preview .sample-content {
+    padding: 0;
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  .dashboard-real {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .dashboard-stats-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #fdfbf7;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--noor-brown);
+    font-weight: 500;
+  }
+
+  .stat-pill svg {
+    color: var(--noor-accent);
+  }
+
+  .care-cards-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .mini-care-card {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid var(--noor-border);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: var(--noor-light-brown);
+  }
+
+  .mini-care-card svg {
+    color: var(--noor-accent);
+  }
+
+  .progress-bar-container {
+    margin-top: 5px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--noor-light-brown);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #f0edea;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c5e4d 0%, #c4a484 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
 
   .landing-benefits {
     padding: 80px 0;
@@ -222,6 +395,142 @@
     margin-bottom: 15px;
   }
   
+  /* Carousel Section */
+  .landing-carousel {
+    padding: 0 0 100px;
+    text-align: center;
+  }
+
+  .carousel-container {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .carousel-track {
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.5s ease;
+    pointer-events: none;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    position: relative;
+    pointer-events: auto;
+  }
+
+  .testimonial-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid var(--noor-border);
+    box-shadow: 0 10px 30px rgba(74, 55, 40, 0.08);
+  }
+
+  .quote-icon {
+    color: var(--noor-accent);
+    opacity: 0.4;
+    margin-bottom: 15px;
+  }
+
+  .testimonial-quote {
+    font-size: 1.15rem;
+    color: var(--noor-brown);
+    line-height: 1.6;
+    margin: 0 0 20px;
+    font-style: italic;
+  }
+
+  .testimonial-rating {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 15px;
+  }
+
+  .testimonial-author {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .testimonial-author strong {
+    color: var(--noor-brown);
+    font-size: 1rem;
+  }
+
+  .testimonial-author span {
+    color: var(--noor-light-brown);
+    font-size: 0.85rem;
+  }
+
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid var(--noor-border);
+    color: var(--noor-brown);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  .carousel-btn:hover {
+    background: var(--noor-brown);
+    color: white;
+    border-color: var(--noor-brown);
+  }
+
+  .carousel-btn-left {
+    left: -60px;
+  }
+
+  .carousel-btn-right {
+    right: -60px;
+  }
+
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--noor-border);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .carousel-dot.active {
+    background: var(--noor-accent);
+    width: 30px;
+    border-radius: 5px;
+  }
+  
 
   .btn-noor {
     background: var(--noor-brown);
@@ -256,7 +565,6 @@
     margin-top: 32px;
   }
   
-  /* Footer */
   .landing-footer {
     text-align: center;
     padding: 40px;
@@ -269,7 +577,31 @@
   @media (max-width: 768px) {
     .hero-title { font-size: 3rem; }
     .features-grid { grid-template-columns: 1fr; }
+    .samples-grid { grid-template-columns: 1fr; }
     .landing-header { padding: 20px; }
     .benefit-item { width: 100%; }
+    .mockup-stats { flex-direction: column; gap: 10px; }
+    .mockup-chart { height: 50px; }
+    .chart-bar { width: 15px; }
+    
+    /* Carousel mobile */
+    .carousel-container {
+      padding: 0 20px;
+    }
+    .carousel-btn-left {
+      left: -10px;
+    }
+    .carousel-btn-right {
+      right: -10px;
+    }
+    .testimonial-card {
+      padding: 25px;
+    }
+    .testimonial-quote {
+      font-size: 1rem;
+    }
+    .carousel-track {
+      min-height: 250px;
+    }
   }
   

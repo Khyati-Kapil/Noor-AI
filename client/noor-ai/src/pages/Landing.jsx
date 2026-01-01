@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
@@ -5,7 +6,19 @@ import {
   Leaf,
   Brain,
   ArrowRight,
-  Check
+  Check,
+  Droplets,
+  Scissors,
+  BarChart3,
+  Calendar,
+  Clock,
+  Flame,
+  Weight,
+  Activity,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Quote
 } from "lucide-react";
 
 import capybaraImg from "../assets/capybara.png";
@@ -39,6 +52,37 @@ const Landing = () => {
     "AI wellness companion 24/7",
     "Progress tracking & insights"
   ];
+
+  const carouselTestimonials = [
+    {
+      quote: "Noor AI completely transformed my skincare routine. My skin has never looked better!",
+      author: "Sarah M.",
+      role: "User since 2024",
+      rating: 5
+    },
+    {
+      quote: "The meal tracking is so intuitive. I've lost 10 pounds while eating what I love.",
+      author: "James K.",
+      role: "Premium Member",
+      rating: 5
+    },
+    {
+      quote: "Finally, an AI that understands holistic wellness. My hair and skin are thriving!",
+      author: "Priya R.",
+      role: "User since 2023",
+      rating: 5
+    }
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % carouselTestimonials.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + carouselTestimonials.length) % carouselTestimonials.length);
+  };
 
   return (
     <div className="landing-page">
@@ -103,6 +147,103 @@ const Landing = () => {
           </div>
         </section>
 
+        <section className="landing-samples">
+          <div className="samples-container">
+            <h2 className="section-title">See Noor AI in action</h2>
+            <p className="section-subtitle">
+              Personalized routines and insights tailored to your unique needs
+            </p>
+
+            <div className="samples-stack">
+              <div className="sample-card">
+                <div className="sample-header">
+                  <Droplets className="sample-icon" />
+                  <h3>Skincare Routine</h3>
+                </div>
+                <div className="sample-content">
+                  <div className="routine-item">
+                    <Clock size={16} />
+                    <span><strong>Morning:</strong> Gentle cleanser → Vitamin C serum → Moisturizer → SPF</span>
+                  </div>
+                  <div className="routine-item">
+                    <Clock size={16} />
+                    <span><strong>Evening:</strong> Oil cleanser → Retinoid → Hydrating mask → Night cream</span>
+                  </div>
+                  <div className="routine-tip">
+                    <Sparkles size={14} />
+                    <span>Adapted for your dry skin type with focus on hydration</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="sample-card">
+                <div className="sample-header">
+                  <Scissors className="sample-icon" />
+                  <h3>Hair Care Routine</h3>
+                </div>
+                <div className="sample-content">
+                  <div className="routine-item">
+                    <Calendar size={16} />
+                    <span><strong>Weekly:</strong> Protein treatment → Deep conditioning mask</span>
+                  </div>
+                  <div className="routine-item">
+                    <Calendar size={16} />
+                    <span><strong>Daily:</strong> Sulfate-free shampoo → Leave-in conditioner → Heat protectant</span>
+                  </div>
+                  <div className="routine-tip">
+                    <Sparkles size={14} />
+                    <span>Optimized for your wavy hair with anti-frizz focus</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="sample-card dashboard-preview">
+                <div className="sample-header">
+                  <BarChart3 className="sample-icon" />
+                  <h3>Dashboard Insights</h3>
+                </div>
+                <div className="sample-content">
+                  <div className="dashboard-real">
+                    <div className="dashboard-stats-row">
+                      <div className="stat-pill">
+                        <Flame size={14} />
+                        <span>2,450 / 2,200 kcal</span>
+                      </div>
+                      <div className="stat-pill">
+                        <Weight size={14} />
+                        <span>65 kg</span>
+                      </div>
+                      <div className="stat-pill">
+                        <Activity size={14} />
+                        <span>Moderate</span>
+                      </div>
+                    </div>
+                    <div className="care-cards-row">
+                      <div className="mini-care-card">
+                        <Sparkles size={14} />
+                        <span>Skin: Combination</span>
+                      </div>
+                      <div className="mini-care-card">
+                        <Droplets size={14} />
+                        <span>Hair: Wavy</span>
+                      </div>
+                    </div>
+                    <div className="progress-bar-container">
+                      <div className="progress-label">
+                        <span>Daily Progress</span>
+                        <span>85%</span>
+                      </div>
+                      <div className="progress-bar">
+                        <div className="progress-fill" style={{width: '85%'}}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="landing-benefits">
           <div className="benefits-content">
             <h2 className="section-title">Why Noor AI?</h2>
@@ -131,11 +272,6 @@ const Landing = () => {
           <p className="cta-subtitle">
             Join thousands finding balance with Noor AI
           </p>
-
-          <Link to="/register" className="btn-noor btn-lg hero-cta">
-            Get Started — It's Free
-            <ArrowRight size={20} />
-          </Link>
         </section>
       </main>
     </div>
