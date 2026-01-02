@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../styles/auth.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -10,23 +10,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
-  // Check if already logged in via cookie
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch(`${API_URL}/auth/check`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          window.location.href = "/dashboard";
-        }
-      } catch {
-        // Not logged in, stay on login page
-      }
-    };
-    checkAuth();
-  }, []);
+  // Removed auth check - causes CORS issues in sandboxed iframes
+  // The redirect-based login flow will handle authentication
 
   const handleSubmit = async (e) => {
     e.preventDefault();

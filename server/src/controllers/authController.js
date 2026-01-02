@@ -168,10 +168,79 @@ export const registerUser = async (req, res) => {
     }
   };
 
-  // Logout user
-  export const logoutUser = (req, res) => {
+// Logout user
+export const logoutUser = (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: "Logged out successfully" });
+  };
+  
+  // Redirect-based registration for cookie flow
+  export const registerRedirect = async (req, res) => {
+    try {
+      const {
+        email,
+        password,
+        name,
+        age,
+        height,
+        weight,
+        gender,
+        primaryGoal,
+        activityLevel,
+        skinType,
+        skinConcerns,
+        hairType,
+        hairConcerns,
+      } = req.query;
+  
+      const emailNormalized = email?.trim().toLowerCase();
+  
+      if (!email || !password || !age || !height || !weight || !primaryGoal || !activityLevel) {
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?error=missing`);
+      }
+  
+      // Check if user exists
+      const existingUser = await User.findOne({ email: emailNormalized });
+      if (existingUser) {
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?error=exists`);
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Create user
+      const user = await User.create({
+        email: emailNormalized,
+        password: hashedPassword,
+        name,
+        age: Number(age),
+        height: Number(height),
+        weight: Number(weight),
+        gender,
+        primaryGoal,
+        activityLevel,
+        skinType,
+        skinConcerns: skinConcerns ? skinConcerns.split(',') : [],
+        hairType,
+        hairConcerns: hairConcerns ? hairConcerns.split(',') : []
+      });
+  
+      // Generate token and set cookie
+      const token = jwt.sign(
+        { userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      });
+  
+      // Redirect to dashboard
+      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard`);
+    } catch (error) {
+      console.error("Register redirect error:", error);
+      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?error=server`);
+    }
   };
 
   

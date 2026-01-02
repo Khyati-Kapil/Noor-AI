@@ -1,7 +1,8 @@
 import { useState } from "react";
-import api from "../api/axios.js";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -24,8 +25,8 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [apiMessage, setApiMessage] = useState("");
-  const [calories, setCalories] = useState(null);
 
   const validate = () => {
     const newErrors = {};
@@ -103,26 +104,47 @@ const Register = () => {
 
     setErrors({});
     setLoading(true);
+    setRedirecting(true);
     setApiMessage("");
 
     try {
-      const response = await api.post(
-        "/auth/register",
-        formData
-      );
-      setCalories(response.data.dailyCalories);
-      setApiMessage("Registration successful!");
-      navigate("/dashboard");
+      // Use redirect-based flow for cookie authentication
+      const params = new URLSearchParams({
+        name: formData.name,
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        age: formData.age,
+        height: formData.height,
+        weight: formData.weight,
+        gender: formData.gender,
+        primaryGoal: formData.primaryGoal,
+        activityLevel: formData.activityLevel,
+        skinType: formData.skinType,
+        skinConcerns: formData.skinConcerns.join(","),
+        hairType: formData.hairType,
+        hairConcerns: formData.hairConcerns.join(",")
+      });
+
+      window.location.href = `${API_URL}/auth/register-redirect?${params.toString()}`;
     } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setApiMessage("User already exists. Try logging in.");
-      } else {
-        setApiMessage("Something went wrong. Please try again.");
-      }
-    } finally {
+      setRedirecting(false);
       setLoading(false);
+      setApiMessage("Something went wrong. Please try again.");
     }
   };
+
+  if (redirecting) {
+    return (
+      <div className="register-container">
+        <div className="glass-card">
+          <h2 className="title">CREATING YOUR ACCOUNT...</h2>
+          <p style={{ textAlign: "center" }}>
+            Please wait while we set up your wellness profile.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="register-container">
@@ -271,7 +293,7 @@ const Register = () => {
         </div>
 
         <button type="submit" className="next-btn" disabled={loading}>
-          {loading ? "Registering..." : "NEXT STEP"}
+          {loading ? "Creating Account..." : "CREATE ACCOUNT"}
         </button>
         <p className="login-option">
           Already have an account?
@@ -284,13 +306,6 @@ const Register = () => {
         </p>
 
         {apiMessage && <p className="api-message-text">{apiMessage}</p>}
-
-        {calories && (
-          <div className="calories-result">
-            <h3>Your estimated daily calories</h3>
-            <strong>{calories} kcal</strong>
-          </div>
-        )}
       </form>
     </div>
   );
