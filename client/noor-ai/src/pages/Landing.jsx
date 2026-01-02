@@ -14,11 +14,7 @@ import {
   Clock,
   Flame,
   Weight,
-  Activity,
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  Quote
+  Activity
 } from "lucide-react";
 
 import capybaraImg from "../assets/capybara.png";
