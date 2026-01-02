@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Flame, Weight, Activity, Utensils, Sparkles, Droplets, Camera, Send } from 'lucide-react';
 import capybaraImg from '../assets/capybara.png';
-import api from "../api/axios";
-import { safeGet } from "../utils/safeStorage.js";
 import "../styles/dashboard.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Dashboard = () => {
   const [userData, setUserData] = useState(null);
@@ -19,19 +19,21 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = safeGet('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await api.get('/user/profile', {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await fetch(`${API_URL}/user/profile`, {
+          method: "GET",
+          credentials: "include"
         });
 
-        setUserData(response.data);
+        if (!response.ok) {
+          throw new Error("Not authenticated");
+        }
+
+        const data = await response.json();
+        setUserData(data);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
+        // Redirect to login if not authenticated
+        window.location.href = "/login";
       } finally {
         setLoading(false);
       }
@@ -59,12 +61,18 @@ const Dashboard = () => {
     setMealResult("");
 
     try {
-      const res = await api.post("/ai/analyze-meal", { mealText });
-      setMealResult(res.data.analysis);
+      const res = await fetch(`${API_URL}/ai/analyze-meal`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ mealText })
+      });
+      const data = await res.json();
+      setMealResult(data.analysis);
 
       
-      if (res.data.calories) {
-        setConsumedCalories(prev => prev + res.data.calories);
+      if (data.calories) {
+        setConsumedCalories(prev => prev + data.calories);
       }
     } catch {
       setMealResult("Unable to analyze meal right now.");
@@ -79,8 +87,14 @@ const Dashboard = () => {
     setReply("");
 
     try {
-      const res = await api.post("/ai/ask", { question });
-      setReply(res.data.reply);
+      const res = await fetch(`${API_URL}/ai/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ question })
+      });
+      const data = await res.json();
+      setReply(data.reply);
     } catch {
       setReply("Noor AI is unavailable at the moment.");
     } finally {

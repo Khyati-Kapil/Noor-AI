@@ -1,60 +1,62 @@
 import { useState, useEffect } from "react";
-import api from "../api/axios.js";
 import "../styles/auth.css";
-import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isInIframe, setIsInIframe] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
+  // Check if already logged in via cookie
   useEffect(() => {
-    // Detect if page is embedded in an iframe
-    setIsInIframe(window.self !== window.top);
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${API_URL}/auth/check`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          window.location.href = "/dashboard";
+        }
+      } catch {
+        // Not logged in, stay on login page
+      }
+    };
+    checkAuth();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+    setRedirecting(true);
 
     try {
-      await api.post("/auth/login", {
+      // Use redirect-based flow for cookie authentication
+      const params = new URLSearchParams({
         email: email.trim().toLowerCase(),
-        password,
+        password: password,
       });
 
-      navigate("/dashboard");
-
-    } catch (err) {
-      if (err.response?.status === 401) {
-        setError("Invalid email or password");
-      } else {
-        setError("Something went wrong. Try again.");
-      }
-    } finally {
+      window.location.href = `${API_URL}/auth/login-redirect?${params.toString()}`;
+    } catch {
+      setRedirecting(false);
+      setError("Something went wrong. Try again.");
       setLoading(false);
     }
   };
 
-  // If in iframe, show a warning and open in new tab
-  if (isInIframe) {
+  if (redirecting) {
     return (
       <div className="register-container">
         <div className="glass-card">
-          <h2 className="title">OPEN IN BROWSER</h2>
-          <p style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            For the best experience, please open Noor AI directly in your browser.
+          <h2 className="title">REDIRECTING...</h2>
+          <p style={{ textAlign: "center" }}>
+            Please wait while we log you in.
           </p>
-          <button 
-            className="next-btn" 
-            onClick={() => window.open(window.location.href, '_blank')}
-          >
-            OPEN IN NEW TAB
-          </button>
         </div>
       </div>
     );
@@ -79,6 +81,7 @@ const Login = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
 
               <input
@@ -86,6 +89,7 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
 
               {error && <p className="error-text">{error}</p>}
@@ -104,7 +108,7 @@ const Login = () => {
             opacity: 0.85,
           }}
         >
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <a href="/register" style={{ color: "#fff", fontWeight: 500 }}>
             Register
           </a>
@@ -115,3 +119,4 @@ const Login = () => {
 };
 
 export default Login;
+
