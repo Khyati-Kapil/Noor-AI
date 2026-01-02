@@ -25,7 +25,6 @@ const Register = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
   const [apiMessage, setApiMessage] = useState("");
 
   const validate = () => {
@@ -101,46 +100,47 @@ const Register = () => {
 
     setErrors({});
     setLoading(true);
-    setRedirecting(true);
     setApiMessage("");
 
     try {
-      const params = new URLSearchParams({
-        name: formData.name,
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-        age: formData.age,
-        height: formData.height,
-        weight: formData.weight,
-        gender: formData.gender,
-        primaryGoal: formData.primaryGoal,
-        activityLevel: formData.activityLevel,
-        skinType: formData.skinType,
-        skinConcerns: formData.skinConcerns.join(","),
-        hairType: formData.hairType,
-        hairConcerns: formData.hairConcerns.join(",")
+      // JSON-only registration (works with origin = null / PDF sandbox)
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email.trim().toLowerCase(),
+          password: formData.password,
+          age: Number(formData.age),
+          height: Number(formData.height),
+          weight: Number(formData.weight),
+          gender: formData.gender,
+          primaryGoal: formData.primaryGoal,
+          activityLevel: formData.activityLevel,
+          skinType: formData.skinType,
+          skinConcerns: formData.skinConcerns,
+          hairType: formData.hairType,
+          hairConcerns: formData.hairConcerns
+        })
       });
 
-      window.location.href = `${API_URL}/auth/register-redirect?${params.toString()}`;
-    } catch {
-      setRedirecting(false);
-      setLoading(false);
+      const data = await response.json();
+
+      if (data.success) {
+        // Registration successful, redirect to dashboard
+        navigate("/dashboard");
+      } else {
+        setApiMessage(data.message || "Registration failed. Please try again.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
       setApiMessage("Something went wrong. Please try again.");
+      setLoading(false);
     }
   };
-
-  if (redirecting) {
-    return (
-      <div className="register-container">
-        <div className="glass-card">
-          <h2 className="title">CREATING YOUR ACCOUNT...</h2>
-          <p style={{ textAlign: "center" }}>
-            Please wait while we set up your wellness profile.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="register-container">

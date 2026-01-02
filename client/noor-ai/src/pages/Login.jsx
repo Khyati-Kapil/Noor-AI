@@ -1,14 +1,15 @@
 import { useState } from "react";
 import "../styles/auth.css";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
 
   const handleLogin = async () => {
     if (!email.trim() || !password) {
@@ -18,39 +19,43 @@ const Login = () => {
 
     setError("");
     setLoading(true);
-    setRedirecting(true);
+    console.log("Attempting login to:", `${API_URL}/api/auth/login`);
 
     try {
-      const params = new URLSearchParams({
-        email: email.trim().toLowerCase(),
-        password: password,
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password: password
+        }),
+        credentials: "include"
       });
 
-      window.location.href = `${API_URL}/auth/login-redirect?${params.toString()}`;
-    } catch {
-      setRedirecting(false);
-      setError("Something went wrong. Try again.");
+      console.log("Login response status:", response.status);
+      const data = await response.json();
+      console.log("Login response data:", data);
+
+      if (data.success) {
+        console.log("Login successful, redirecting to dashboard...");
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Invalid credentials");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Connection error. Please check if server is running.");
       setLoading(false);
     }
   };
 
-  if (redirecting) {
-    return (
-      <div className="register-container">
-        <div className="glass-card">
-          <h2 className="title">REDIRECTING...</h2>
-          <p style={{ textAlign: "center" }}>
-            Please wait while we log you in.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="register-container">
       <div className="glass-card">
-        <div className="glow-border"></div>
+        <div className="glow-border" />
 
         <h2 className="title">WELCOME BACK</h2>
         <p style={{ textAlign: "center", opacity: 0.8, marginBottom: "1.5rem" }}>
@@ -63,12 +68,17 @@ const Login = () => {
 
             <div className="input-flex">
               <input
+                id="email"
+                name="email"
+                type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
 
               <input
+                id="password"
+                name="password"
                 type="password"
                 placeholder="Password"
                 value={password}
@@ -84,14 +94,8 @@ const Login = () => {
           {loading ? "LOGGING IN..." : "LOGIN"}
         </button>
 
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: "1rem",
-            opacity: 0.85,
-          }}
-        >
-          Don't have an account?{" "}
+        <div style={{ textAlign: "center", marginTop: "1rem", opacity: 0.85 }}>
+          Do not have an account?{" "}
           <a href="/register" style={{ color: "#fff", fontWeight: 500 }}>
             Register
           </a>
