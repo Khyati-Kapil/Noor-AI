@@ -9,7 +9,13 @@ import aiRoutes from "./routes/aiRoutes.js";
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: [
+    "http://localhost:5173", 
+    "http://localhost:3000",
+    "https://noor-ai.khyatikapil.dev",
+    "https://noor-ai.vercel.app",
+    "https://noor-ai-owjj.vercel.app/"
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
