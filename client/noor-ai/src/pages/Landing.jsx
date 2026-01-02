@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles,
@@ -52,37 +52,6 @@ const Landing = () => {
     "AI wellness companion 24/7",
     "Progress tracking & insights"
   ];
-
-  const carouselTestimonials = [
-    {
-      quote: "Noor AI completely transformed my skincare routine. My skin has never looked better!",
-      author: "Sarah M.",
-      role: "User since 2024",
-      rating: 5
-    },
-    {
-      quote: "The meal tracking is so intuitive. I've lost 10 pounds while eating what I love.",
-      author: "James K.",
-      role: "Premium Member",
-      rating: 5
-    },
-    {
-      quote: "Finally, an AI that understands holistic wellness. My hair and skin are thriving!",
-      author: "Priya R.",
-      role: "User since 2023",
-      rating: 5
-    }
-  ];
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % carouselTestimonials.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + carouselTestimonials.length) % carouselTestimonials.length);
-  };
 
   return (
     <div className="landing-page">
