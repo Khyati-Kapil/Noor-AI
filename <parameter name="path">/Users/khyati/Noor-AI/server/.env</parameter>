@@ -1,0 +1,16 @@
+<parameter name="content"># Server
+PORT=5000
+NODE_ENV=development
+
+# JWT Secret (change this in production)
+JWT_SECRET=noor-ai-secret-key-change-in-production
+
+# Frontend URL (for redirects)
+FRONTEND_URL=http://localhost:5174
+
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/noor-ai
+
+# Hugging Face (optional - for AI features)
+HUGGING_FACE_API_KEY=
+</parameter>
