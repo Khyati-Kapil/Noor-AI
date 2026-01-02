@@ -10,17 +10,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
-  // Removed auth check - causes CORS issues in sandboxed iframes
-  // The redirect-based login flow will handle authentication
+  const handleLogin = async () => {
+    if (!email.trim() || !password) {
+      setError("Please enter email and password");
+      return;
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
     setError("");
     setLoading(true);
     setRedirecting(true);
 
     try {
-      // Use redirect-based flow for cookie authentication
       const params = new URLSearchParams({
         email: email.trim().toLowerCase(),
         password: password,
@@ -49,7 +49,7 @@ const Login = () => {
 
   return (
     <div className="register-container">
-      <form className="glass-card" onSubmit={handleSubmit}>
+      <div className="glass-card">
         <div className="glow-border"></div>
 
         <h2 className="title">WELCOME BACK</h2>
@@ -66,7 +66,6 @@ const Login = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
 
               <input
@@ -74,7 +73,6 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
 
               {error && <p className="error-text">{error}</p>}
@@ -82,7 +80,7 @@ const Login = () => {
           </div>
         </div>
 
-        <button type="submit" className="next-btn" disabled={loading}>
+        <button type="button" className="next-btn" onClick={handleLogin} disabled={loading}>
           {loading ? "LOGGING IN..." : "LOGIN"}
         </button>
 
@@ -98,7 +96,7 @@ const Login = () => {
             Register
           </a>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

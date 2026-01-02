@@ -31,7 +31,6 @@ const Register = () => {
   const validate = () => {
     const newErrors = {};
 
-    
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     }
@@ -93,9 +92,7 @@ const Register = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleRegister = async () => {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -108,7 +105,6 @@ const Register = () => {
     setApiMessage("");
 
     try {
-      // Use redirect-based flow for cookie authentication
       const params = new URLSearchParams({
         name: formData.name,
         email: formData.email.trim().toLowerCase(),
@@ -126,7 +122,7 @@ const Register = () => {
       });
 
       window.location.href = `${API_URL}/auth/register-redirect?${params.toString()}`;
-    } catch (error) {
+    } catch {
       setRedirecting(false);
       setLoading(false);
       setApiMessage("Something went wrong. Please try again.");
@@ -148,7 +144,7 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <form className="glass-card" onSubmit={handleSubmit}>
+      <div className="glass-card">
         <h2 className="title">YOUR JOURNEY STARTS HERE!</h2>
 
         <div className="section-row">
@@ -292,7 +288,7 @@ const Register = () => {
           </div>
         </div>
 
-        <button type="submit" className="next-btn" disabled={loading}>
+        <button type="button" className="next-btn" onClick={handleRegister} disabled={loading}>
           {loading ? "Creating Account..." : "CREATE ACCOUNT"}
         </button>
         <p className="login-option">
@@ -306,7 +302,7 @@ const Register = () => {
         </p>
 
         {apiMessage && <p className="api-message-text">{apiMessage}</p>}
-      </form>
+      </div>
     </div>
   );
 };
