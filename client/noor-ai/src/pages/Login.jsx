@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../api/axios.js";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,12 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isInIframe, setIsInIframe] = useState(false);
+
+  useEffect(() => {
+    // Detect if page is embedded in an iframe
+    setIsInIframe(window.self !== window.top);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +39,26 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  // If in iframe, show a warning and open in new tab
+  if (isInIframe) {
+    return (
+      <div className="register-container">
+        <div className="glass-card">
+          <h2 className="title">OPEN IN BROWSER</h2>
+          <p style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            For the best experience, please open Noor AI directly in your browser.
+          </p>
+          <button 
+            className="next-btn" 
+            onClick={() => window.open(window.location.href, '_blank')}
+          >
+            OPEN IN NEW TAB
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="register-container">
