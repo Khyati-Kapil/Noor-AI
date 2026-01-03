@@ -7,50 +7,70 @@
 
 const memoryStorage = new Map();
 
+// Helper to check if sessionStorage is actually accessible
+const canUseSessionStorage = () => {
+  try {
+    // Check if sessionStorage exists and is accessible
+    if (typeof sessionStorage === 'undefined' || sessionStorage === null) {
+      return false;
+    }
+    // Attempt a test write/read to verify access
+    const testKey = '__storage_test__';
+    sessionStorage.setItem(testKey, testKey);
+    sessionStorage.removeItem(testKey);
+    return true;
+  } catch {
+    // sandboxed environment or permission denied
+    return false;
+  }
+};
+
+const useSessionStorage = canUseSessionStorage();
+
 export const safeStorage = {
   getItem: (key) => {
-    try {
-      if (typeof sessionStorage !== 'undefined' && sessionStorage !== null) {
+    if (useSessionStorage) {
+      try {
         return sessionStorage.getItem(key);
+      } catch {
+        // fallback to memory
       }
-    } catch {
-      // sandboxed environment - use memory
     }
     return memoryStorage.get(key) || null;
   },
   
   setItem: (key, value) => {
-    try {
-      if (typeof sessionStorage !== 'undefined' && sessionStorage !== null) {
+    if (useSessionStorage) {
+      try {
         sessionStorage.setItem(key, value);
         return;
+      } catch {
+        // fallback to memory
       }
-    } catch {
-      // sandboxed environment - use memory
     }
     memoryStorage.set(key, value);
   },
   
   removeItem: (key) => {
-    try {
-      if (typeof sessionStorage !== 'undefined' && sessionStorage !== null) {
+    if (useSessionStorage) {
+      try {
         sessionStorage.removeItem(key);
         return;
+      } catch {
+        // fallback to memory
       }
-    } catch {
-      // sandboxed environment - use memory
     }
     memoryStorage.delete(key);
   },
   
   clear: () => {
-    try {
-      if (typeof sessionStorage !== 'undefined' && sessionStorage !== null) {
+    if (useSessionStorage) {
+      try {
         sessionStorage.clear();
         return;
+      } catch {
+        // fallback to memory
       }
-    } catch {
-      // sandboxed environment - use memory
     }
     memoryStorage.clear();
   }
