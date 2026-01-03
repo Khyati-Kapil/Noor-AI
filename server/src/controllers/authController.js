@@ -5,30 +5,17 @@ import User from "../models/User.js";
 const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
 const TOKEN_EXPIRY = "7d";
 
-// Helper to set HTTP-only cookie
-const setTokenCookie = (res, token) => {
-  const isProduction = process.env.NODE_ENV === "production";
-  const isSecure = process.env.NODE_ENV === "production";
-  
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: isSecure, // true for production HTTPS
-    sameSite: isProduction ? "none" : "lax", // none for cross-origin (production), lax for local
-    partitioned: false,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: "/"
-  });
-};
-
-// Helper to clear cookie
-const clearTokenCookie = (res) => {
-  const isProduction = process.env.NODE_ENV === "production";
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
-    path: "/"
-  });
+/**
+ * Generate JWT token for user
+ * @param {string} userId - The user ID to encode in the token
+ * @returns {string} JWT token
+ */
+const generateToken = (userId) => {
+  return jwt.sign(
+    { userId },
+    JWT_SECRET,
+    { expiresIn: TOKEN_EXPIRY }
+  );
 };
 
 // Register new user
@@ -90,25 +77,17 @@ export const registerUser = async (req, res) => {
       hairConcerns: hairConcerns || []
     });
 
-    // Generate token
-    const token = jwt.sign(
-      { userId: user._id },
-      JWT_SECRET,
-      { expiresIn: TOKEN_EXPIRY }
-    );
+    // Generate JWT token
+    const token = generateToken(user._id);
 
-    // Set cookie
-    setTokenCookie(res, token);
-
-    // Return success (NO redirects)
+    // Return success with token in body (no cookies)
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      token,
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
-        dailyCalories: user.dailyCalories
+        email: user.email
       }
     });
   } catch (err) {
@@ -150,22 +129,17 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { userId: user._id },
-      JWT_SECRET,
-      { expiresIn: TOKEN_EXPIRY }
-    );
+    // Generate JWT token
+    const token = generateToken(user._id);
 
-    setTokenCookie(res, token);
-
+    // Return token in body (no cookies)
     res.json({
       success: true,
-      message: "Login successful",
+      token,
       user: {
         id: user._id,
         name: user.name,
-        email: user.email,
-        dailyCalories: user.dailyCalories
+        email: user.email
       }
     });
   } catch (err) {
@@ -178,8 +152,9 @@ export const loginUser = async (req, res) => {
 };
 
 // Logout user
+// Note: No server-side action needed for header-based auth
+// Client simply clears the token from memory
 export const logoutUser = (req, res) => {
-  clearTokenCookie(res);
   res.json({ 
     success: true,
     message: "Logged out successfully" 
@@ -189,9 +164,10 @@ export const logoutUser = (req, res) => {
 // Check authentication status
 export const checkAuth = async (req, res) => {
   try {
-    const token = req.cookies?.token;
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
     
-    if (!token) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ 
         success: false,
         message: "Not authenticated",
@@ -199,6 +175,8 @@ export const checkAuth = async (req, res) => {
       });
     }
 
+    const token = authHeader.split(" ")[1];
+    
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.userId).select("-password");
 

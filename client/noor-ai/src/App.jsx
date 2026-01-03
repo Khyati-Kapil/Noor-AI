@@ -1,9 +1,20 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./components/Layout";
+
+const ProtectedRoute = ({ children }) => {
+  const token = sessionStorage.getItem("authToken");
+  
+  if (!token) {
+    
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
 
 function App() {
   return (
@@ -13,7 +24,14 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </Layout>
     </BrowserRouter>

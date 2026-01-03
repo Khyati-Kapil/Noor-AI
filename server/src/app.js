@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import cookieParser from "cookie-parser";
 
 import corsConfig from "./config/cors.js";
 
@@ -12,8 +11,6 @@ import aiRoutes from "./routes/aiRoutes.js";
 const app = express();
 
 app.use(corsConfig);
-
-app.use(cookieParser());
 
 app.use(express.json());
 

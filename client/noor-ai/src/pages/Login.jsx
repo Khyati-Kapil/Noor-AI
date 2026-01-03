@@ -19,7 +19,6 @@ const Login = () => {
 
     setError("");
     setLoading(true);
-    console.log("Attempting login to:", `${API_URL}/api/auth/login`);
 
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -27,20 +26,23 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json"
         },
+      
         body: JSON.stringify({
           email: email.trim().toLowerCase(),
           password: password
-        }),
-        credentials: "include"
+        })
       });
 
-      console.log("Login response status:", response.status);
       const data = await response.json();
-      console.log("Login response data:", data);
+      console.log("Login response:", data);
 
-      if (data.success) {
-        console.log("Login successful, redirecting to dashboard...");
-        navigate("/dashboard");
+      if (data.success && data.token) {
+       
+        sessionStorage.setItem("authToken", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+        
+        console.log("Token stored, navigating to dashboard...");
+        navigate("/dashboard", { replace: true });
       } else {
         setError(data.message || "Invalid credentials");
         setLoading(false);

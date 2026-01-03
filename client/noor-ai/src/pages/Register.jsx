@@ -109,6 +109,7 @@ const Register = () => {
         headers: {
           "Content-Type": "application/json"
         },
+        // No credentials: "include" - we use Authorization header instead
         body: JSON.stringify({
           name: formData.name,
           email: formData.email.trim().toLowerCase(),
@@ -128,8 +129,12 @@ const Register = () => {
 
       const data = await response.json();
 
-      if (data.success) {
-        // Registration successful, redirect to dashboard
+      if (data.success && data.token) {
+        
+        sessionStorage.setItem("authToken", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+        
+       
         navigate("/dashboard");
       } else {
         setApiMessage(data.message || "Registration failed. Please try again.");

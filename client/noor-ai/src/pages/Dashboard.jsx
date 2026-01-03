@@ -18,11 +18,26 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        console.log("Fetching user profile...");
+        const token = sessionStorage.getItem("authToken");
+        console.log("Token exists:", !!token);
+        
         const response = await api.get("/api/user/profile");
+       
+        console.log("Profile response:", response.data);
         setUserData(response.data);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
-        window.location.href = "/login";
+        console.error("Error response:", error.response?.data);
+        console.error("Error status:", error.response?.status);
+        
+        sessionStorage.removeItem("authToken");
+        sessionStorage.removeItem("user");
+        
+      
+        if (typeof window !== "undefined" && !window.location.origin.startsWith("null")) {
+          window.location.href = "/login";
+        }
       } finally {
         setLoading(false);
       }
