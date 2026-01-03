@@ -1,12 +1,22 @@
+
 import { useState } from "react";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
-import safeStorage from "../utils/safeStorage";
+import { useAuth } from "../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+/**
+ * Register Component - Header-Based JWT Authentication
+ * 
+ * Uses AuthContext to store token in React state (memory only).
+ * No cookies, no localStorage, no sessionStorage.
+ * 
+ * Works with origin = null (PDF/sandboxed iframes)
+ */
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: "", 
     email: "",
@@ -104,36 +114,27 @@ const Register = () => {
     setApiMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email.trim().toLowerCase(),
-          password: formData.password,
-          age: Number(formData.age),
-          height: Number(formData.height),
-          weight: Number(formData.weight),
-          gender: formData.gender,
-          primaryGoal: formData.primaryGoal,
-          activityLevel: formData.activityLevel,
-          skinType: formData.skinType,
-          skinConcerns: formData.skinConcerns,
-          hairType: formData.hairType,
-          hairConcerns: formData.hairConcerns
-        })
+      const result = await register({
+        name: formData.name,
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        age: Number(formData.age),
+        height: Number(formData.height),
+        weight: Number(formData.weight),
+        gender: formData.gender,
+        primaryGoal: formData.primaryGoal,
+        activityLevel: formData.activityLevel,
+        skinType: formData.skinType,
+        skinConcerns: formData.skinConcerns,
+        hairType: formData.hairType,
+        hairConcerns: formData.hairConcerns
       });
 
-      const data = await response.json();
-
-      if (data.success && data.token) {
-        safeStorage.setItem("authToken", data.token);
-        safeStorage.setItem("user", JSON.stringify(data.user));
+      if (result.success) {
+        // Registration successful, redirect to dashboard
         navigate("/dashboard");
       } else {
-        setApiMessage(data.message || "Registration failed. Please try again.");
+        setApiMessage(result.message || "Registration failed. Please try again.");
         setLoading(false);
       }
     } catch (error) {

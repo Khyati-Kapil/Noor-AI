@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Flame, Weight, Activity, Utensils, Sparkles, Droplets, Camera, Send } from 'lucide-react';
 import capybaraImg from '../assets/capybara.png';
 import api from '../api/axios';
+import safeStorage from '../utils/safeStorage';
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
@@ -15,26 +16,23 @@ const Dashboard = () => {
   const [loadingMeal, setLoadingMeal] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
+  const getAuthHeader = () => {
+    const token = safeStorage.getItem("authToken");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log("Fetching user profile...");
-        const token = sessionStorage.getItem("authToken");
-        console.log("Token exists:", !!token);
-        
-        const response = await api.get("/api/user/profile");
-       
-        console.log("Profile response:", response.data);
+        const response = await api.get("/api/user/profile", {
+          headers: getAuthHeader()
+        });
         setUserData(response.data);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
-        console.error("Error response:", error.response?.data);
-        console.error("Error status:", error.response?.status);
+        safeStorage.removeItem("authToken");
+        safeStorage.removeItem("user");
         
-        sessionStorage.removeItem("authToken");
-        sessionStorage.removeItem("user");
-        
-      
         if (typeof window !== "undefined" && !window.location.origin.startsWith("null")) {
           window.location.href = "/login";
         }
@@ -46,26 +44,16 @@ const Dashboard = () => {
     fetchUserData();
   }, []);
 
-  const containerStyle = {
-    backgroundColor: '#fdfbf7',
-    color: '#4a3728',
-    minHeight: '100vh',
-    width: '100%',
-    margin: '0',
-    padding: '40px 20px',
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  };
-
   const analyzeMeal = async () => {
     if (!mealText.trim()) return;
     setLoadingMeal(true);
     setMealResult("");
 
     try {
-      const res = await api.post("/api/ai/analyze-meal", { mealText });
+      const res = await api.post("/api/ai/analyze-meal", 
+        { mealText },
+        { headers: getAuthHeader() }
+      );
       setMealResult(res.data.analysis);
 
       if (res.data.calories) {
@@ -84,7 +72,10 @@ const Dashboard = () => {
     setReply("");
 
     try {
-      const res = await api.post("/api/ai/ask", { question });
+      const res = await api.post("/api/ai/ask", 
+        { question },
+        { headers: getAuthHeader() }
+      );
       setReply(res.data.reply);
     } catch {
       setReply("Noor AI is unavailable at the moment.");
@@ -93,15 +84,13 @@ const Dashboard = () => {
     }
   };
 
-
   const caloriePercentage = userData?.dailyCalories 
     ? Math.round((consumedCalories / userData.dailyCalories) * 100)
     : 0;
 
   return (
-    <div style={containerStyle} className="noor-dashboard-root">
-      <div style={{ maxWidth: '1000px', width: '100%' }}>
-
+    <div className="noor-dashboard-root">
+      <div style={{ maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '40px 20px' }}>
         <header style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
             <img src={capybaraImg} alt="Noor AI Logo" style={{ width: '50px', height: '50px' }} />
@@ -136,7 +125,7 @@ const Dashboard = () => {
                   icon={<Weight size={20} />}
                   label="Weight"
                   val={`${userData.user.weight} kg`}
-                  goal={userData.user.primaryGoal === 'loss' ? '→ Target weight' : ''}
+                  goal={userData.user.primaryGoal === 'loss' ? 'Target weight' : ''}
                 />
                 <StatCard
                   icon={<Activity size={20} />}
@@ -155,87 +144,107 @@ const Dashboard = () => {
           </div>
         </section>
 
-        <section className="meal-card">
-          <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
-            <Utensils size={24} />
-            <div>
-              <h3>What did you eat? <span className="ai-badge">AI Powered</span></h3>
-              <p style={{ fontSize: '0.9rem' }}>
-                Describe your meal in natural language, or snap a photo!
-              </p>
-            </div>
-          </div>
-
-          <div className="input-group">
-            <input
-              type="text"
-              placeholder="e.g., 2 rotis, dal, paneer sabzi..."
-              value={mealText}
-              onChange={(e) => setMealText(e.target.value)}
-            />
-            <Sparkles className="input-icon" size={18} />
-          </div>
-
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button className="btn-secondary">
-              <Camera size={18} /> Add Photo
-            </button>
-            <button className="btn-primary" onClick={analyzeMeal}>
-              {loadingMeal ? "Analyzing..." : "Analyze Meal"}
-            </button>
-          </div>
-
-          {mealResult && (
-            <div className="ai-response">
-              <strong>AI Analysis</strong>
-              <p>{mealResult}</p>
-            </div>
-          )}
-        </section>
-
-        <div className="dashboard-grid-2">
-          <CareCard title="Skin Care" type="Combination Skin" concerns={['Acne', 'Dark spots', 'Dryness']} icon={<Sparkles size={20} />} />
-          <CareCard title="Hair Care" type="Wavy, Thick" concerns={['Frizz', 'Dandruff', 'Split ends']} icon={<Droplets size={20} />} />
-        </div>
-
-        <section className="section-block">
-          <h2 className="section-title">Ask Noor AI</h2>
-
-          <div className="chat-card">
-            <div className="chat-welcome">
-              <img src={capybaraImg} alt="Noor AI" style={{ width: '32px' }} />
-              <p>
-                Hi! I'm Noor. Ask me about diet, skincare, haircare, or wellness.
-              </p>
-            </div>
-
-            <div className="chat-input-wrapper">
-              <input
-                type="text"
-                placeholder="Reduce hair frizz"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-              />
-              <button className="send-btn" onClick={askNoor}>
-                {loadingChat ? "..." : <Send size={18} />}
-              </button>
-            </div>
-
-            <div className="suggestions-row">
-              <button onClick={() => setQuestion("How can I lose weight?")}>How can I lose weight?</button>
-              <button onClick={() => setQuestion("Skincare for acne")}>Skincare for acne</button>
-              <button onClick={() => setQuestion("Reduce hair frizz")}>Reduce hair frizz</button>
-            </div>
-
-            {reply && (
-              <div className="ai-reply">
-                <strong>Noor AI</strong>
-                <p>{reply}</p>
+        {userData ? (
+          <>
+            <section className="meal-card">
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+                <Utensils size={24} />
+                <div>
+                  <h3>What did you eat? <span className="ai-badge">AI Powered</span></h3>
+                  <p style={{ fontSize: '0.9rem' }}>
+                    Describe your meal in natural language, or snap a photo!
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
-        </section>
 
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="e.g., 2 rotis, dal, paneer sabzi..."
+                  value={mealText}
+                  onChange={(e) => setMealText(e.target.value)}
+                />
+                <Sparkles className="input-icon" size={18} />
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button className="btn-secondary">
+                  <Camera size={18} /> Add Photo
+                </button>
+                <button className="btn-primary" onClick={analyzeMeal}>
+                  {loadingMeal ? "Analyzing..." : "Analyze Meal"}
+                </button>
+              </div>
+
+              {mealResult && (
+                <div className="ai-response">
+                  <strong>AI Analysis</strong>
+                  <p>{mealResult}</p>
+                </div>
+              )}
+            </section>
+
+            <div className="dashboard-grid-2">
+              <CareCard 
+                title="Skin Care" 
+                type={userData.user.skinType || "Not set"} 
+                concerns={userData.user.skinConcerns || []} 
+                icon={<Sparkles size={20} />} 
+              />
+              <CareCard 
+                title="Hair Care" 
+                type={userData.user.hairType || "Not set"} 
+                concerns={userData.user.hairConcerns || []} 
+                icon={<Droplets size={20} />} 
+              />
+            </div>
+
+            <section className="section-block">
+              <h2 className="section-title">Ask Noor AI</h2>
+
+              <div className="chat-card">
+                <div className="chat-welcome">
+                  <img src={capybaraImg} alt="Noor AI" style={{ width: '32px' }} />
+                  <p>
+                    Hi! I am Noor. Ask me about diet, skincare, haircare, or wellness.
+                  </p>
+                </div>
+
+                <div className="chat-input-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Reduce hair frizz"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                  />
+                  <button className="send-btn" onClick={askNoor}>
+                    {loadingChat ? "..." : <Send size={18} />}
+                  </button>
+                </div>
+
+                <div className="suggestions-row">
+                  <button onClick={() => setQuestion("How can I lose weight?")}>How can I lose weight?</button>
+                  <button onClick={() => setQuestion("Skincare for acne")}>Skincare for acne</button>
+                  <button onClick={() => setQuestion("Reduce hair frizz")}>Reduce hair frizz</button>
+                </div>
+
+                {reply && (
+                  <div className="ai-reply">
+                    <strong>Noor AI</strong>
+                    <p>{reply}</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        ) : !loading && (
+          <div className="card shadow" style={{ textAlign: 'center', padding: '40px' }}>
+            <h3>Please log in to view your dashboard</h3>
+            <a href="/login" className="btn-primary" style={{ display: 'inline-block', marginTop: '20px' }}>
+              Go to Login
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -262,11 +271,10 @@ const CareCard = ({ title, type, concerns, icon }) => (
     <div>{type}</div>
     <div className="label-text">CONCERNS</div>
     <div style={{ display: 'flex', gap: '10px' }}>
-      {concerns.map(c => <span key={c}>{c}</span>)}
+      {concerns.length > 0 ? concerns.map((c) => <span key={c}>{c}</span>) : <span>None</span>}
     </div>
-    <button className="link-btn">View Routine ›</button>
+    <button className="link-btn">View Routine </button>
   </div>
 );
 
 export default Dashboard;
-

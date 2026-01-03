@@ -1,12 +1,22 @@
+
 import { useState } from "react";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
-import safeStorage from "../utils/safeStorage";
+import { useAuth } from "../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+/**
+ * Login Component - Header-Based JWT Authentication
+ * 
+ * Uses AuthContext to store token in React state (memory only).
+ * Token is sent via Authorization header on subsequent requests.
+ * 
+ * Works with origin = null (PDF/sandboxed iframes)
+ */
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,27 +32,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          password: password
-        })
-      });
+      const result = await login(email.trim().toLowerCase(), password);
 
-      const data = await response.json();
-      console.log("Login response:", data);
-
-      if (data.success && data.token) {
-        safeStorage.setItem("authToken", data.token);
-        safeStorage.setItem("user", JSON.stringify(data.user));
-        console.log("Token stored, navigating to dashboard...");
-        navigate("/dashboard", { replace: true });
+      if (result.success) {
+        // Redirect to dashboard
+        navigate("/dashboard");
       } else {
-        setError(data.message || "Invalid credentials");
+        setError(result.message || "Invalid credentials");
         setLoading(false);
       }
     } catch (err) {
@@ -106,3 +102,4 @@ const Login = () => {
 };
 
 export default Login;
+
