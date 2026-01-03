@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import capybaraImg from "../assets/capybara.png";
 import "../styles/layout.css";
+import { safeGet } from "../utils/safeStorage";
 
 const Layout = ({ children }) => {
   const location = useLocation();
 
-  const isLoggedIn = !!sessionStorage.getItem("authToken");
+  const isLoggedIn = !!safeGet("authToken");
 
   return (
     <div className="layout">

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { safeGet, safeRemove } from "../utils/safeStorage";
 
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -24,7 +25,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
    
-    const token = sessionStorage.getItem("authToken");
+    const token = safeGet("authToken");
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -43,8 +44,8 @@ api.interceptors.response.use(
   error => {
     if (error.response?.status === 401) {
      
-      sessionStorage.removeItem("authToken");
-      sessionStorage.removeItem("user");
+      safeRemove("authToken");
+      safeRemove("user");
       
       if (typeof window !== "undefined" && !window.location.origin.startsWith("null")) {
         window.location.href = "/login";

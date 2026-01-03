@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { safeStorage, safeGet, safeSet } from '../utils/safeStorage';
+import { safeGet, safeSet, safeStorage } from '../utils/safeStorage';
 
 /**
  * React hook for using safeStorage with reactive state
@@ -42,7 +42,7 @@ export const useSafeStorage = (key, initialValue = null) => {
   const removeValue = useCallback(() => {
     try {
       setStoredValue(initialValue);
-      safeStorage.remove(key);
+      safeStorage.removeItem(key);
     } catch (error) {
       console.warn(`useSafeStorage removeValue failed for key '${key}':`, error.message);
     }

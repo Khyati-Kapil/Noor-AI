@@ -4,9 +4,10 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./components/Layout";
+import { safeGet } from "./utils/safeStorage";
 
 const ProtectedRoute = ({ children }) => {
-  const token = sessionStorage.getItem("authToken");
+  const token = safeGet("authToken");
   
   if (!token) {
     
