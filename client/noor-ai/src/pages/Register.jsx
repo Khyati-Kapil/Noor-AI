@@ -5,6 +5,39 @@ import safeStorage from "../utils/safeStorage";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+const isRestrictedEnvironment = () => {
+  try {
+   
+    const userAgent = navigator.userAgent || "";
+    if (userAgent.includes("PDF") || userAgent.includes("Acrobat")) {
+      return true;
+    }
+    
+   
+    try {
+      if (window.self !== window.top) {
+        
+        if (document.referrer.includes("pdf") || document.domain !== window.location.hostname) {
+          return true;
+        }
+      }
+    } catch {
+      return true; 
+    }
+    
+    const testKey = "__pdf_test__";
+    try {
+      sessionStorage.setItem(testKey, "1");
+      sessionStorage.removeItem(testKey);
+      return false;
+    } catch {
+      return true; 
+    }
+  } catch {
+    return true;
+  }
+};
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -23,16 +56,18 @@ const Register = () => {
     hairConcerns: []
   });
   
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [apiMessage, setApiMessage] = useState("");
+ 
+  const [isRestricted] = useState(() => isRestrictedEnvironment());
 
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+    
+    if (formData.name && formData.name.trim().length === 0) {
+      newErrors.name = "Name cannot be empty";
     }
 
     if (!formData.email) {
@@ -51,15 +86,15 @@ const Register = () => {
       newErrors.password = "Password must be at least 6 characters";
     }
 
-    if (!formData.age || Number(formData.age) <= 0) {
-      newErrors.age = "Enter a valid age";
+    if (!formData.age || Number(formData.age) < 1 || Number(formData.age) > 120) {
+      newErrors.age = "Enter a valid age (1-120)";
     }
 
-    if (!formData.height || Number(formData.height) <= 0) {
+    if (!formData.height || Number(formData.height) < 1) {
       newErrors.height = "Enter a valid height";
     }
 
-    if (!formData.weight || Number(formData.weight) <= 0) {
+    if (!formData.weight || Number(formData.weight) < 1) {
       newErrors.weight = "Enter a valid weight";
     }
 
@@ -146,6 +181,20 @@ const Register = () => {
   return (
     <div className="register-container">
       <div className="glass-card">
+        {isRestricted && (
+          <div style={{
+            background: "rgba(255, 193, 7, 0.2)",
+            border: "1px solid rgba(255, 193, 7, 0.5)",
+            borderRadius: "12px",
+            padding: "12px 20px",
+            marginBottom: "20px",
+            color: "#fff",
+            textAlign: "center",
+            fontSize: "14px"
+          }}>
+            ⚠️ Running in restricted mode (PDF/Sandbox). Some features may be limited.
+          </div>
+        )}
         <h2 className="title">YOUR JOURNEY STARTS HERE!</h2>
 
         <div className="section-row">
@@ -200,7 +249,7 @@ const Register = () => {
             <span className="section-label">WELLNESS GOALS</span>
             <div className="input-grid">
               <input name="weight" placeholder="Weight (kg)" value={formData.weight} onChange={handleChange} />
-              <input placeholder="Target Weight" />
+              <input name="targetWeight" placeholder="Target Weight" />
               <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="full-span">
                 <option value="">Activity Level</option>
                 <option value="light">Light</option>

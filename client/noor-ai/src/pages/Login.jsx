@@ -5,12 +5,49 @@ import safeStorage from "../utils/safeStorage";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+
+const isRestrictedEnvironment = () => {
+  try {
+   
+    const userAgent = navigator.userAgent || "";
+    if (userAgent.includes("PDF") || userAgent.includes("Acrobat")) {
+      return true;
+    }
+    
+    
+    try {
+      if (window.self !== window.top) {
+        
+        if (document.referrer.includes("pdf") || document.domain !== window.location.hostname) {
+          return true;
+        }
+      }
+    } catch {
+      return true; 
+    }
+    
+
+    const testKey = "__pdf_test__";
+    try {
+      sessionStorage.setItem(testKey, "1");
+      sessionStorage.removeItem(testKey);
+      return false;
+    } catch {
+      return true; 
+    }
+  } catch {
+    return true;
+  }
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+ 
+  const [isRestricted] = useState(() => isRestrictedEnvironment());
 
   const handleLogin = async () => {
     if (!email.trim() || !password) {
@@ -55,6 +92,20 @@ const Login = () => {
   return (
     <div className="register-container">
       <div className="glass-card">
+        {isRestricted && (
+          <div style={{
+            background: "rgba(255, 193, 7, 0.2)",
+            border: "1px solid rgba(255, 193, 7, 0.5)",
+            borderRadius: "12px",
+            padding: "12px 20px",
+            marginBottom: "20px",
+            color: "#fff",
+            textAlign: "center",
+            fontSize: "14px"
+          }}>
+            ⚠️ Running in restricted mode (PDF/Sandbox). Some features may be limited.
+          </div>
+        )}
         <div className="glow-border" />
 
         <h2 className="title">WELCOME BACK</h2>
