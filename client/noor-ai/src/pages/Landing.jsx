@@ -77,7 +77,7 @@ const Landing = () => {
               <ArrowRight size={20} />
             </Link>
 
-            <Link to="/dashboard" className="btn-subtle btn-lg">
+            <Link to="/demo" className="btn-subtle btn-lg">
               View Demo
             </Link>
           </div>

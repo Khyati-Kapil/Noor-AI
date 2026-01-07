@@ -4,13 +4,19 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./components/Layout";
-import { safeGet } from "./utils/safeStorage";
+import { safeGet, safeSet } from "./utils/safeStorage";
+
+
+const DemoWrapper = ({ children }) => {
+  safeSet("demoMode", "true");
+  return children;
+};
 
 const ProtectedRoute = ({ children }) => {
   const token = safeGet("authToken");
+  const isDemo = safeGet("demoMode") === "true";
   
-  if (!token) {
-    
+  if (!token && !isDemo) {
     return <Navigate to="/login" replace />;
   }
   
@@ -33,6 +39,14 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/demo" 
+            element={
+              <DemoWrapper>
+                <Dashboard />
+              </DemoWrapper>
+            } 
+          />
         </Routes>
       </Layout>
     </BrowserRouter>
@@ -41,4 +55,3 @@ function App() {
 
 
 export default App;
-

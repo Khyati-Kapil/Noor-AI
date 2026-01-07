@@ -166,6 +166,7 @@ const Register = () => {
       if (data.success && data.token) {
         safeStorage.setItem("authToken", data.token);
         safeStorage.setItem("user", JSON.stringify(data.user));
+        safeStorage.removeItem("demoMode");
         navigate("/dashboard");
       } else {
         setApiMessage(data.message || "Registration failed. Please try again.");

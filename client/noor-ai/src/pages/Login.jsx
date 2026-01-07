@@ -76,6 +76,7 @@ const Login = () => {
       if (data.success && data.token) {
         safeStorage.setItem("authToken", data.token);
         safeStorage.setItem("user", JSON.stringify(data.user));
+        safeStorage.removeItem("demoMode");
         console.log("Token stored, navigating to dashboard...");
         navigate("/dashboard", { replace: true });
       } else {
