@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(rgba(33, 16, 0, 0.675), rgba(0,0,0,0.9)), url('/Users/khyati/Noor-AI/client/noor-ai/src/assets/ab0cb640d03e26f6627ca703a4c21acf.jpg');
+  background: linear-gradient(rgba(33, 16, 0, 0.675), rgba(0,0,0,0.9)), url('../assets/ab0cb640d03e26f6627ca703a4c21acf.jpg');
 }
 
 .title {
