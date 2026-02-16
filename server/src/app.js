@@ -10,9 +10,9 @@ import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 
+app.disable("x-powered-by");
 app.use(corsConfig);
-
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 
 app.get("/health", (req, res) => {
@@ -51,4 +51,3 @@ app.use((err, req, res, next) => {
 });
 
 export default app;
-

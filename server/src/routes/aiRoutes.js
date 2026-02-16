@@ -3,63 +3,82 @@ import axios from "axios";
 
 const router = express.Router();
 
+const HF_TIMEOUT_MS = Number(process.env.HF_TIMEOUT_MS) || 9000;
+const HF_FAST_MODE = process.env.HF_FAST_MODE !== "false";
+const CACHE_TTL_MS = 10 * 60 * 1000;
+
 const hfClient = axios.create({
   baseURL: "https://api-inference.huggingface.co",
   headers: {
     Authorization: `Bearer ${process.env.HF_API_KEY}`,
     "Content-Type": "application/json"
   },
-  timeout: 120000
+  timeout: HF_TIMEOUT_MS
 });
+
+const responseCache = new Map();
+
+const getCached = (key) => {
+  const item = responseCache.get(key);
+  if (!item) return null;
+  if (Date.now() - item.timestamp > CACHE_TTL_MS) {
+    responseCache.delete(key);
+    return null;
+  }
+  return item.value;
+};
+
+const setCached = (key, value) => {
+  responseCache.set(key, { value, timestamp: Date.now() });
+};
 
 function estimateCaloriesBasic(mealText) {
   const text = mealText.toLowerCase();
 
   const calorieMap = {
-    'roti': 120,
-    'chapati': 120,
-    'rice': 130,
-    'dal': 150,
-    'curry': 200,
-    'chicken': 250,
-    'fish': 200,
-    'vegetable': 80,
-    'salad': 50,
-    'bread': 80,
-    'butter': 100,
-    'cheese': 110,
-    'egg': 70,
-    'milk': 60,
-    'yogurt': 80,
-    'fruit': 60,
-    'apple': 95,
-    'banana': 105,
-    'orange': 60,
-    'pizza': 285,
-    'burger': 350,
-    'pasta': 220,
-    'noodle': 200,
-    'soup': 100,
-    'sandwich': 300
+    roti: 120,
+    chapati: 120,
+    rice: 130,
+    dal: 150,
+    curry: 200,
+    chicken: 250,
+    fish: 200,
+    vegetable: 80,
+    salad: 50,
+    bread: 80,
+    butter: 100,
+    cheese: 110,
+    egg: 70,
+    milk: 60,
+    yogurt: 80,
+    fruit: 60,
+    apple: 95,
+    banana: 105,
+    orange: 60,
+    pizza: 285,
+    burger: 350,
+    pasta: 220,
+    noodle: 200,
+    soup: 100,
+    sandwich: 300
   };
 
   let totalCalories = 0;
-  let foundFoods = [];
+  const foundFoods = [];
 
-  Object.keys(calorieMap).forEach(food => {
-    const regex = new RegExp(`\\b${food}\\w*\\b`, 'gi');
+  Object.keys(calorieMap).forEach((food) => {
+    const regex = new RegExp(`\\b${food}\\w*\\b`, "gi");
     const matches = text.match(regex);
     if (matches) {
       const count = matches.length;
       totalCalories += calorieMap[food] * count;
-      foundFoods.push(`${count} ${food}${count > 1 ? 's' : ''}`);
+      foundFoods.push(`${count} ${food}${count > 1 ? "s" : ""}`);
     }
   });
 
-  
   if (totalCalories === 0) {
-    totalCalories = 300; 
-    foundFoods = ['meal items'];
+    totalCalories = 300;
+    foundFoods.push("meal items");
   }
 
   return {
@@ -67,6 +86,34 @@ function estimateCaloriesBasic(mealText) {
     calories: Math.round(totalCalories)
   };
 }
+
+const buildMealResponse = (mealText, estimation, source = "fast") => ({
+  success: true,
+  analysis: `Meal: ${mealText}\nFoods: ${estimation.foods.join(", ")}\nEstimated Calories: ${estimation.calories} kcal (${source})`,
+  calories: estimation.calories
+});
+
+const buildFallbackReply = (question) => {
+  const q = question.toLowerCase();
+
+  if (q.includes("weight loss") || q.includes("lose weight")) {
+    return "Try a 300-500 calorie deficit, increase protein and fiber, walk daily, and prioritize 7-8 hours of sleep.";
+  }
+  if (q.includes("acne") || q.includes("skin")) {
+    return "Use a gentle cleanser, non-comedogenic moisturizer, and SPF every morning. Add actives slowly and stay consistent.";
+  }
+  if (q.includes("hair") || q.includes("frizz")) {
+    return "Use sulfate-free shampoo, condition well, reduce heat styling, and add a leave-in or serum for frizz control.";
+  }
+  if (q.includes("diet") || q.includes("eating") || q.includes("meal")) {
+    return "Focus on whole foods, include protein at each meal, and keep hydration and meal timing consistent.";
+  }
+  if (q.includes("sleep")) {
+    return "Set a fixed bedtime, avoid heavy meals late night, reduce screen exposure before sleep, and keep your room cool and dark.";
+  }
+
+  return "I can help with nutrition, skincare, haircare, sleep, and fitness. Share your goal and current routine for a more specific plan.";
+};
 
 router.post("/analyze-meal", async (req, res) => {
   try {
@@ -76,58 +123,57 @@ router.post("/analyze-meal", async (req, res) => {
       return res.status(400).json({ message: "Meal text required" });
     }
 
-    console.log("Analyzing meal:", mealText);
+    const normalizedText = mealText.trim().toLowerCase();
+    const cacheKey = `meal:${normalizedText}`;
+    const cached = getCached(cacheKey);
+    if (cached) return res.json(cached);
 
-    try {
-      // Try using a different model that's known to work well
-      const response = await hfClient.post(
-        "/models/google/flan-t5-base",
-        {
-          inputs: `How many calories are in ${mealText}? Give only the number.`,
-          parameters: {
-            max_new_tokens: 10,
-            temperature: 0.1,
-            do_sample: false
-          }
-        }
-      );
-
-      const output = response.data?.[0]?.generated_text || response.data?.generated_text || "";
-      console.log("HF Response:", output);
-
-      const calories = output.match(/\d+/) ? parseInt(output.match(/\d+/)[0]) : null;
-
-      if (calories && calories > 0 && calories < 5000) {
-        return res.json({
-          success: true,
-          analysis: `Meal: ${mealText}\nEstimated Calories: ${calories} kcal`,
-          calories: calories
-        });
-      }
-    } catch (hfError) {
-      console.log("HF API failed, using basic estimation:", hfError.response?.data || hfError.message);
-    }
-
-  
     const estimation = estimateCaloriesBasic(mealText);
 
-    res.json({
-      success: true,
-      analysis: `Meal: ${mealText}\nFoods: ${estimation.foods.join(', ')}\nEstimated Calories: ${estimation.calories} kcal`,
-      calories: estimation.calories
-    });
+    if (HF_FAST_MODE || !process.env.HF_API_KEY) {
+      const fast = buildMealResponse(mealText, estimation, "fast estimate");
+      setCached(cacheKey, fast);
+      return res.json(fast);
+    }
 
+    try {
+      const response = await hfClient.post("/models/google/flan-t5-base", {
+        inputs: `How many calories are in ${mealText}? Give only the number.`,
+        parameters: {
+          max_new_tokens: 10,
+          temperature: 0.1,
+          do_sample: false
+        }
+      });
+
+      const output = response.data?.[0]?.generated_text || response.data?.generated_text || "";
+      const calories = output.match(/\d+/) ? parseInt(output.match(/\d+/)[0], 10) : null;
+
+      if (calories && calories > 0 && calories < 5000) {
+        const result = {
+          success: true,
+          analysis: `Meal: ${mealText}\nEstimated Calories: ${calories} kcal (ai estimate)`,
+          calories
+        };
+        setCached(cacheKey, result);
+        return res.json(result);
+      }
+    } catch (hfError) {
+      console.log("HF meal estimation unavailable:", hfError.message);
+    }
+
+    const fallback = buildMealResponse(mealText, estimation, "fast estimate");
+    setCached(cacheKey, fallback);
+    return res.json(fallback);
   } catch (error) {
-    console.error("General Error:", error.message);
-
-    res.json({
+    console.error("Meal analyze error:", error.message);
+    return res.json({
       success: true,
-      analysis: `Meal: ${req.body.mealText || 'Unknown meal'}\nEstimated Calories: ~300 kcal (basic estimate)`,
+      analysis: `Meal: ${req.body?.mealText || "Unknown meal"}\nEstimated Calories: ~300 kcal`,
       calories: 300
     });
   }
 });
-
 
 router.post("/ask", async (req, res) => {
   try {
@@ -137,65 +183,58 @@ router.post("/ask", async (req, res) => {
       return res.status(400).json({ message: "Question required" });
     }
 
-    console.log("Noor AI processing question:", question);
+    const normalizedQuestion = question.trim().toLowerCase();
+    const cacheKey = `ask:${normalizedQuestion}`;
+    const cached = getCached(cacheKey);
+    if (cached) return res.json(cached);
 
-    // Use HuggingFace for general wellness questions
+    const fallbackReply = buildFallbackReply(question);
+
+    if (HF_FAST_MODE || !process.env.HF_API_KEY) {
+      const fast = { success: true, reply: fallbackReply };
+      setCached(cacheKey, fast);
+      return res.json(fast);
+    }
+
     try {
-      const response = await hfClient.post(
-        "/models/google/flan-t5-base",
-        {
-          inputs: `Answer this wellness question concisely: ${question}`,
-          parameters: {
-            max_new_tokens: 150,
-            temperature: 0.7,
-            do_sample: true
-          }
+      const response = await hfClient.post("/models/google/flan-t5-base", {
+        inputs: `Answer this wellness question concisely in 3 bullet points: ${question}`,
+        parameters: {
+          max_new_tokens: 120,
+          temperature: 0.5,
+          do_sample: true
         }
-      );
+      });
 
       const output = response.data?.[0]?.generated_text || response.data?.generated_text || "";
-      console.log("HF Response:", output);
-
       if (output && output.trim()) {
-        return res.json({
-          success: true,
-          reply: output.trim()
-        });
+        const aiResponse = { success: true, reply: output.trim() };
+        setCached(cacheKey, aiResponse);
+        return res.json(aiResponse);
       }
     } catch (hfError) {
-      console.log("HF API failed, using basic response:", hfError.response?.data || hfError.message);
+      console.log("HF chat unavailable:", hfError.message);
     }
 
-    // Fallback responses for common wellness questions
-    const questionLower = question.toLowerCase();
-    let fallbackReply = "";
-
-    if (questionLower.includes("weight loss") || questionLower.includes("lose weight")) {
-      fallbackReply = "For weight loss: 1) Create a calorie deficit of 300-500 cal/day, 2) Eat more protein and fiber, 3) Exercise regularly (30 min daily), 4) Stay hydrated, 5) Get 7-8 hours of sleep.";
-    } else if (questionLower.includes("acne") || questionLower.includes("skin")) {
-      fallbackReply = "For better skin: 1) Cleanse twice daily, 2) Use non-comedogenic products, 3) Stay hydrated, 4) Eat antioxidant-rich foods, 5) Don't touch your face, 6) Consider consulting a dermatologist.";
-    } else if (questionLower.includes("hair") || questionLower.includes("frizz")) {
-      fallbackReply = "For hair care: 1) Use sulfate-free shampoo, 2) Condition regularly, 3) Avoid heat styling, 4) Eat biotin-rich foods, 5) Get regular trims, 6) Use silk pillowcases.";
-    } else if (questionLower.includes("diet") || questionLower.includes("eating")) {
-      fallbackReply = "Healthy eating tips: 1) Eat mostly whole foods, 2) Include protein at every meal, 3) Choose complex carbs, 4) Eat colorful vegetables, 5) Limit processed foods and sugar.";
-    } else {
-      fallbackReply = "I'm Noor AI, your wellness companion. I can help with diet, skincare, haircare, fitness, and general health questions. What would you like to know?";
-    }
-
-    res.json({
-      success: true,
-      reply: fallbackReply
-    });
-
+    const finalFallback = { success: true, reply: fallbackReply };
+    setCached(cacheKey, finalFallback);
+    return res.json(finalFallback);
   } catch (error) {
-    console.error("Ask Error:", error.message);
-
-    res.json({
+    console.error("Ask error:", error.message);
+    return res.json({
       success: true,
-      reply: "Noor AI is taking a short break. Please try again in a moment!"
+      reply: "Noor is temporarily unavailable. Please try again shortly."
     });
   }
 });
 
-export default router;
+router.post("/analyze-food-photo", async (_req, res) => {
+  return res.json({
+    success: true,
+    analysis: "Photo analysis quick mode: image received. Add a short meal description for more accurate calories.",
+    foodItems: ["meal image"],
+    calories: 300
+  });
+});
 
+export default router;

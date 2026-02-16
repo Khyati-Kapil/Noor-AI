@@ -10,22 +10,24 @@ const userSchema = new mongoose.Schema(
         lowercase: true,
         trim: true
       },
-    password: { type: String, required: true },
+    password: { type: String, default: null },
+    authProvider: { type: String, enum: ["local", "google"], default: "local" },
+    googleId: { type: String, unique: true, sparse: true },
 
-    age: { type: Number, required: true },
-    height: { type: Number, required: true }, 
-    weight: { type: Number, required: true }, 
-    gender: { type: String, enum: ["male", "female", "other"] },
+    age: { type: Number, default: 24 },
+    height: { type: Number, default: 165 }, 
+    weight: { type: Number, default: 60 }, 
+    gender: { type: String, enum: ["male", "female", "other"], default: "other" },
 
     primaryGoal: {
       type: String,
       enum: ["loss", "gain", "maintain", "skin", "hair", "wellness"],
-      required: true,
+      default: "wellness",
     },
     activityLevel: {
         type: String,
         enum: ["light", "moderate", "active"],
-        required: true,
+        default: "moderate",
       },
       sleepHours: Number,
       waterIntake: Number,
@@ -47,4 +49,3 @@ const userSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("User", userSchema);
-

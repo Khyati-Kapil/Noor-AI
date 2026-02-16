@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
 import safeStorage from "../utils/safeStorage";
@@ -64,8 +64,107 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleConfigLoading, setGoogleConfigLoading] = useState(false);
+  const [googleNotConfigured, setGoogleNotConfigured] = useState(false);
+  const googleBtnRef = useRef(null);
+  const [googleClientId, setGoogleClientId] = useState(import.meta.env.VITE_GOOGLE_CLIENT_ID || "");
  
   const [isRestricted] = useState(() => isRestrictedEnvironment());
+
+  const completeAuth = (data) => {
+    safeStorage.setItem("authToken", data.token);
+    safeStorage.setItem("user", JSON.stringify(data.user));
+    safeStorage.removeItem("demoMode");
+    navigate("/dashboard", { replace: true });
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchGoogleClientId = async () => {
+      if (googleClientId) return;
+      setGoogleConfigLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/api/auth/google-config`);
+        const data = await response.json();
+        if (!isMounted) return;
+        if (data?.configured && data?.clientId) {
+          setGoogleClientId(data.clientId);
+          setGoogleNotConfigured(false);
+        } else {
+          setGoogleNotConfigured(true);
+        }
+      } catch {
+        if (isMounted) setGoogleNotConfigured(true);
+      } finally {
+        if (isMounted) setGoogleConfigLoading(false);
+      }
+    };
+
+    fetchGoogleClientId();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [googleClientId]);
+
+  useEffect(() => {
+    if (!googleClientId || !googleBtnRef.current) return;
+
+    const existingScript = document.getElementById("google-identity-script");
+    const initializeGoogle = () => {
+      if (!window.google?.accounts?.id) return;
+
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: async (response) => {
+          if (!response?.credential) return;
+          setGoogleLoading(true);
+          setError("");
+          try {
+            const apiResponse = await fetch(`${API_URL}/api/auth/google`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ idToken: response.credential })
+            });
+            const data = await apiResponse.json();
+            if (data.success && data.token) {
+              completeAuth(data);
+            } else {
+              setError(data.message || "Google sign in failed");
+            }
+          } catch {
+            setError("Google sign in failed. Please try again.");
+          } finally {
+            setGoogleLoading(false);
+          }
+        }
+      });
+
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        type: "standard",
+        shape: "pill",
+        theme: "outline",
+        text: "continue_with",
+        size: "large",
+        width: 320
+      });
+    };
+
+    if (existingScript) {
+      initializeGoogle();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.id = "google-identity-script";
+    script.async = true;
+    script.defer = true;
+    script.onload = initializeGoogle;
+    document.body.appendChild(script);
+  }, [googleClientId]);
 
   const handleLogin = async () => {
     if (!email.trim() || !password) {
@@ -92,11 +191,7 @@ const Login = () => {
       console.log("Login response:", data);
 
       if (data.success && data.token) {
-        safeStorage.setItem("authToken", data.token);
-        safeStorage.setItem("user", JSON.stringify(data.user));
-        safeStorage.removeItem("demoMode");
-        console.log("Token stored, navigating to dashboard...");
-        navigate("/dashboard", { replace: true });
+        completeAuth(data);
       } else {
         setError(data.message || "Invalid credentials");
         setLoading(false);
@@ -163,6 +258,18 @@ const Login = () => {
         <button type="button" className="next-btn" onClick={handleLogin} disabled={loading}>
           {loading ? "LOGGING IN..." : "LOGIN"}
         </button>
+
+        {(googleClientId || googleConfigLoading || googleNotConfigured) && (
+          <div className="google-login-wrap">
+            <p className="google-login-label">or continue with</p>
+            {googleClientId && <div ref={googleBtnRef} className="google-btn-container" />}
+            {googleConfigLoading && <p className="google-login-label">Loading Google sign in...</p>}
+            {googleNotConfigured && !googleConfigLoading && (
+              <p className="google-login-label">Google login not configured on server yet.</p>
+            )}
+            {googleLoading && <p className="google-login-label">Signing in with Google...</p>}
+          </div>
+        )}
 
         <div style={{ textAlign: "center", marginTop: "1rem", opacity: 0.85 }}>
           Do not have an account?{" "}

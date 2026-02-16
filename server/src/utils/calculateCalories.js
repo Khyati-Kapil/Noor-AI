@@ -6,10 +6,17 @@ export const calculateCalories = ({
     activityLevel,
     goal,
   }) => {
+    const safeWeight = Number(weight) || 60;
+    const safeHeight = Number(height) || 165;
+    const safeAge = Number(age) || 24;
+    const safeGender = gender || "other";
+    const safeActivity = activityLevel || "moderate";
+    const safeGoal = goal || "maintain";
+
     let bmr =
-      gender === "male"
-        ? 10 * weight + 6.25 * height - 5 * age + 5
-        : 10 * weight + 6.25 * height - 5 * age - 161;
+      safeGender === "male"
+        ? 10 * safeWeight + 6.25 * safeHeight - 5 * safeAge + 5
+        : 10 * safeWeight + 6.25 * safeHeight - 5 * safeAge - 161;
   
     const activityMultiplier = {
       light: 1.375,
@@ -17,10 +24,10 @@ export const calculateCalories = ({
       active: 1.725,
     };
   
-    const maintenance = bmr * activityMultiplier[activityLevel];
-  
-    if (goal === "loss") return Math.max(maintenance - 400, 1200);
-    if (goal === "gain") return maintenance + 300;
+    const maintenance = bmr * (activityMultiplier[safeActivity] || activityMultiplier.moderate);
+
+    if (safeGoal === "loss") return Math.max(maintenance - 400, 1200);
+    if (safeGoal === "gain") return maintenance + 300;
   
     return Math.round(maintenance);
   };
