@@ -405,7 +405,7 @@ const Dashboard = () => {
                 {imagePreview ? 'Change Photo' : 'Add Photo'}
               </button>
               <button className="btn-primary" onClick={analyzeMeal} disabled={loadingMeal}>
-                {loadingMeal ? "Analyzing..." : "✨ Analyze Meal"}
+                {loadingMeal ? "Analyzing..." : "Analyze Meal"}
               </button>
             </div>
 
