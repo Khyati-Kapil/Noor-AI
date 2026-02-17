@@ -2,14 +2,16 @@ import axios from "axios";
 import { safeGet, safeRemove } from "../utils/safeStorage";
 
 const getApiUrl = () => {
+
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
   
-  if (import.meta.env.DEV) {
-    return "http://localhost:5000";
+  if (import.meta.env.PROD || !import.meta.env.DEV) {
+    return "https://noor-ai-backend.onrender.com";
   }
   
+
   return "http://localhost:5000";
 };
 
