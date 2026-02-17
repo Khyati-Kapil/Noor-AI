@@ -77,6 +77,10 @@ const Landing = () => {
               <ArrowRight size={20} />
             </Link>
 
+            <Link to="/login" className="btn-subtle btn-lg">
+              Login
+            </Link>
+
             <Link to="/demo" className="btn-subtle btn-lg">
               View Demo
             </Link>
