@@ -3,7 +3,25 @@ import "../styles/auth.css";
 import { useNavigate } from "react-router-dom";
 import safeStorage from "../utils/safeStorage";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const getApiUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  if (import.meta.env.PROD === true) {
+    return "https://noor-ai-backend.onrender.com";
+  }
+
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+ 
+  if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1')) {
+    return "https://noor-ai-backend.onrender.com";
+  }
+  
+  return "http://localhost:5000";
+};
+
+const API_URL = getApiUrl();
 
 
 const isRestrictedEnvironment = () => {
