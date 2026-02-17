@@ -7,11 +7,19 @@ const getApiUrl = () => {
     return import.meta.env.VITE_API_URL;
   }
   
-  if (import.meta.env.PROD || !import.meta.env.DEV) {
+ 
+  if (import.meta.env.PROD === true) {
     return "https://noor-ai-backend.onrender.com";
   }
   
 
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+ 
+  if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1')) {
+    return "https://noor-ai-backend.onrender.com";
+  }
+  
+ 
   return "http://localhost:5000";
 };
 
