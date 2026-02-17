@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Flame, Weight, Activity, Utensils, Sparkles, Droplets, Camera, Send, Droplet, TrendingUp, Bell, X, Loader2, CheckCircle } from 'lucide-react';
 import capybaraImg from '../assets/capybara.png';
 import api from '../api/axios';
@@ -6,6 +7,7 @@ import safeStorage from '../utils/safeStorage';
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [consumedCalories, setConsumedCalories] = useState(0);
@@ -434,7 +436,7 @@ const Dashboard = () => {
                   <span key={c} className="concern-tag">{c}</span>
                 )) : <span className="concern-tag" style={{ background: '#f5f3f0', color: '#8c7e71' }}>None set</span>}
               </div>
-              <button className="link-btn">
+              <button className="link-btn" onClick={() => navigate('/skincare-routine')}>
                 View Routine <TrendingUp size={16} />
               </button>
             </div>
@@ -454,7 +456,7 @@ const Dashboard = () => {
                   <span key={c} className="concern-tag">{c}</span>
                 )) : <span className="concern-tag" style={{ background: '#f5f3f0', color: '#8c7e71' }}>None set</span>}
               </div>
-              <button className="link-btn">
+              <button className="link-btn" onClick={() => navigate('/haircare-routine')}>
                 View Routine <TrendingUp size={16} />
               </button>
             </div>

@@ -3,6 +3,8 @@ import Landing from "./pages/Landing";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import SkinCareRoutine from "./pages/SkinCareRoutine";
+import HairCareRoutine from "./pages/HairCareRoutine";
 import Layout from "./components/Layout";
 import { safeGet, safeSet } from "./utils/safeStorage";
 
@@ -45,6 +47,22 @@ function App() {
               <DemoWrapper>
                 <Dashboard />
               </DemoWrapper>
+            } 
+          />
+          <Route 
+            path="/skincare-routine" 
+            element={
+              <ProtectedRoute>
+                <SkinCareRoutine />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/haircare-routine" 
+            element={
+              <ProtectedRoute>
+                <HairCareRoutine />
+              </ProtectedRoute>
             } 
           />
         </Routes>
