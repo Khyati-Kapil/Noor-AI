@@ -3,16 +3,19 @@ import cors from "cors";
 const corsOptions = {
   origin: function (origin, callback) {
 
-    if (!origin) return callback(null, true); // allow server-to-server
+    
+    if (!origin) return callback(null, true);
 
-    if (
+    const allowed = 
       origin.includes("localhost") ||
       origin.includes("127.0.0.1") ||
-      origin.includes("vercel.app")
-    ) {
+      origin.endsWith("vercel.app");
+
+    if (allowed) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      console.log("Blocked by CORS:", origin);
+      callback(null, false);  
     }
   },
   credentials: true
