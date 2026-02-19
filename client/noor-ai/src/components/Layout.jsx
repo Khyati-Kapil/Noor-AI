@@ -5,6 +5,7 @@ import { safeGet } from "../utils/safeStorage";
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const linkedinUrl = "https://www.linkedin.com/";
 
   const isLoggedIn = !!safeGet("authToken");
 
@@ -67,8 +68,8 @@ const Layout = ({ children }) => {
           <div className="footer-links">
             <div className="footer-section">
              
-              <a href="#about">About Us</a>
-              <a href="#contact">Contact</a>
+              <Link to="/about-us">About Us</Link>
+              <a href={linkedinUrl} target="_blank" rel="noreferrer">Contact</a>
             </div>
             
           </div>

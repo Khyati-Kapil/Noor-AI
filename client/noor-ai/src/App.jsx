@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import SkinCareRoutine from "./pages/SkinCareRoutine";
 import HairCareRoutine from "./pages/HairCareRoutine";
+import AboutUs from "./pages/AboutUs";
 import Layout from "./components/Layout";
 import { safeGet, safeSet } from "./utils/safeStorage";
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about-us" element={<AboutUs />} />
           <Route 
             path="/dashboard" 
             element={
