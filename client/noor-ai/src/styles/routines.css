@@ -1,0 +1,518 @@
+:root {
+  --r-text: #2f2b29;
+  --r-muted: #6f645c;
+  --r-card: rgba(255, 255, 255, 0.84);
+  --r-border: rgba(255, 255, 255, 0.75);
+  --r-shadow: 0 18px 44px rgba(62, 40, 21, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes shine {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+.routine-page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+  padding: 30px 16px 46px;
+}
+
+.skin-theme {
+  background: radial-gradient(circle at 11% 14%, #fff1e1 0%, transparent 36%),
+    radial-gradient(circle at 87% 16%, #efe9ff 0%, transparent 34%),
+    linear-gradient(145deg, #f3e9de 0%, #f8f2eb 44%, #efe6f7 100%);
+}
+
+.hair-theme {
+  background: radial-gradient(circle at 9% 14%, #e8f8ef 0%, transparent 36%),
+    radial-gradient(circle at 90% 16%, #e5f3ff 0%, transparent 34%),
+    linear-gradient(145deg, #e9f3ed 0%, #f1f8f4 44%, #e6f1fb 100%);
+}
+
+.routine-orb {
+  position: fixed;
+  width: 320px;
+  height: 320px;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(3px);
+  z-index: 0;
+  animation: drift 9s ease-in-out infinite;
+}
+
+.orb-1 {
+  left: -90px;
+  top: -70px;
+  background: radial-gradient(circle, rgba(219, 141, 105, 0.35), rgba(219, 141, 105, 0));
+}
+
+.orb-2 {
+  right: -100px;
+  top: 170px;
+  background: radial-gradient(circle, rgba(113, 174, 230, 0.3), rgba(113, 174, 230, 0));
+  animation-duration: 12s;
+}
+
+.routine-shell {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+}
+
+.reveal-up {
+  opacity: 0;
+  animation: riseIn 0.6s ease forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.delay-2 {
+  animation-delay: 0.17s;
+}
+
+.delay-3 {
+  animation-delay: 0.25s;
+}
+
+.delay-4 {
+  animation-delay: 0.32s;
+}
+
+.routine-header {
+  border: 1px solid var(--r-border);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.58));
+  border-radius: 22px;
+  box-shadow: var(--r-shadow);
+  padding: 18px;
+}
+
+.routine-back-btn {
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #5e4e43;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 18px rgba(70, 45, 23, 0.1);
+}
+
+.routine-title-row {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.routine-title-row h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--r-text);
+}
+
+.routine-title-row p {
+  margin: 4px 0 0;
+  color: var(--r-muted);
+}
+
+.routine-title-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+}
+
+.routine-title-icon.skin {
+  background: linear-gradient(145deg, #ffe8db, #ffd2bc);
+  color: #9c4f30;
+}
+
+.routine-title-icon.hair {
+  background: linear-gradient(145deg, #dff1e8, #c4e7d7);
+  color: #2f7d5f;
+}
+
+.routine-card {
+  background: var(--r-card);
+  border: 1px solid var(--r-border);
+  border-radius: 20px;
+  box-shadow: var(--r-shadow);
+  backdrop-filter: blur(8px);
+  padding: 18px;
+}
+
+.routine-card h2 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.08rem;
+  color: var(--r-text);
+}
+
+.profile-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+}
+
+.profile-box {
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(122, 104, 90, 0.14);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.mini-label {
+  display: block;
+  color: #817469;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.profile-box strong {
+  margin-top: 5px;
+  display: block;
+  color: #3a312c;
+  font-size: 1.15rem;
+}
+
+.chip-row {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pill-chip {
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 6px 11px;
+  background: linear-gradient(140deg, #fff0e6, #ffe4d7);
+  color: #8a4a30;
+  font-weight: 600;
+}
+
+.hair-theme .pill-chip {
+  background: linear-gradient(140deg, #e9f8f0, #d8efe3);
+  color: #2f775e;
+}
+
+.pill-chip.muted {
+  background: #f3f0ec;
+  color: #84776d;
+}
+
+.routine-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-head h3 {
+  margin: 0;
+  color: #342d28;
+}
+
+.card-head p {
+  margin: 3px 0 0;
+  color: #7a6e65;
+  font-size: 0.88rem;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+}
+
+.card-icon.morning {
+  background: linear-gradient(140deg, #ffe8d6, #ffd8bb);
+  color: #d6722f;
+}
+
+.card-icon.evening {
+  background: linear-gradient(140deg, #ebe4ff, #d9cdff);
+  color: #7457ac;
+}
+
+.card-icon.hairdaily {
+  background: linear-gradient(140deg, #dff0ff, #c7e4fd);
+  color: #2670b9;
+}
+
+.card-icon.hairweekly {
+  background: linear-gradient(140deg, #ffefdd, #ffe1bf);
+  color: #c37b1f;
+}
+
+.step-list {
+  margin-top: 12px;
+  display: grid;
+  gap: 9px;
+}
+
+.step-item {
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(120, 101, 87, 0.14);
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.step-check {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #ffe5d6, #ffd2bc);
+  color: #984f31;
+  flex-shrink: 0;
+}
+
+.step-check.alt {
+  background: linear-gradient(145deg, #ece4ff, #d8c9ff);
+  color: #6f54a7;
+}
+
+.step-check.blue {
+  background: linear-gradient(145deg, #dcedff, #cae4ff);
+  color: #296fb2;
+}
+
+.step-check.gold {
+  background: linear-gradient(145deg, #ffedd8, #ffe0bc);
+  color: #bd7421;
+}
+
+.step-body {
+  flex: 1;
+}
+
+.step-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.step-meta strong {
+  color: #3b312b;
+  font-size: 0.89rem;
+}
+
+.step-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #81756b;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.step-progress-bg {
+  margin-top: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #ede5dd;
+  overflow: hidden;
+}
+
+.step-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #b45f3b, #e8a37e);
+}
+
+.step-progress-fill.alt {
+  background: linear-gradient(90deg, #7558ab, #ad92d6);
+}
+
+.step-progress-fill.blue {
+  background: linear-gradient(90deg, #2171c1, #74b5ef);
+}
+
+.day-pill {
+  margin-top: 6px;
+  display: inline-block;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: #fff3e5;
+  color: #b46f1f;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.product-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.product-item {
+  border-radius: 12px;
+  background: linear-gradient(140deg, #fff4eb, #ffece0);
+  border: 1px solid rgba(185, 128, 92, 0.22);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #81462d;
+}
+
+.hair-product {
+  background: linear-gradient(140deg, #ebf8f1, #def1e8);
+  border-color: rgba(82, 152, 124, 0.28);
+  color: #2f7158;
+}
+
+.routine-tip-banner {
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(140deg, #7f4f39, #5f3c2c);
+  box-shadow: 0 20px 42px rgba(61, 34, 20, 0.25);
+}
+
+.routine-tip-banner h2 {
+  color: #fff;
+}
+
+.hair-banner {
+  background: linear-gradient(140deg, #2f7d5f, #286b52);
+}
+
+.tip-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tip-item {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  color: #fff;
+  align-items: flex-start;
+}
+
+.general-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.general-tip {
+  border-radius: 12px;
+  background: #f7f2ec;
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.tip-index {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(140deg, #ffe8db, #ffd2bc);
+  color: #964e31;
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.hair-index {
+  background: linear-gradient(140deg, #dcf2e7, #c4e7d8);
+  color: #2f7158;
+}
+
+.general-tip span {
+  color: #5c4f45;
+  font-size: 0.87rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  .profile-grid,
+  .routine-grid,
+  .tip-grid,
+  .general-grid,
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step-meta {
+    flex-direction: column;
+    gap: 3px;
+  }
+}
+
+@media (max-width: 520px) {
+  .routine-page {
+    padding: 18px 10px 30px;
+  }
+
+  .routine-card,
+  .routine-header {
+    padding: 14px;
+  }
+}

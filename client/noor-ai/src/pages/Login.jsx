@@ -129,7 +129,7 @@ const Login = () => {
 
         <h2 className="title">WELCOME BACK</h2>
         <p style={{ textAlign: "center", opacity: 0.8, marginBottom: "1.5rem" }}>
-          Continue your health journey with Noor AI
+          Continue your health journey with Noor
         </p>
 
         <div className="section-row">

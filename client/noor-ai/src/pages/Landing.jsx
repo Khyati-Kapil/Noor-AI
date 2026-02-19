@@ -24,7 +24,7 @@ const Landing = () => {
   const features = [
     {
       icon: Brain,
-      title: "AI-Powered Insights",
+      title: "Smart Insights",
       description:
         "Smart meal analysis and personalized wellness recommendations"
     },
@@ -45,7 +45,7 @@ const Landing = () => {
   const benefits = [
     "Track meals with natural language",
     "Personalized skin & hair routines",
-    "AI wellness companion 24/7",
+    "Wellness companion 24/7",
     "Progress tracking & insights"
   ];
 
@@ -67,7 +67,7 @@ const Landing = () => {
           </h1>
 
           <p className="hero-subtitle">
-            Meet Noor — your AI companion for nutrition, skincare,
+            Meet Noor — your companion for nutrition, skincare,
             and holistic wellness. Simple. Personal. Calming.
           </p>
 
@@ -89,7 +89,7 @@ const Landing = () => {
           <div className="hero-image-container">
             <img
               src={capybaraImg}
-              alt="Noor AI Mascot"
+              alt="Noor Mascot"
               className="hero-capybara"
             />
           </div>
@@ -118,7 +118,7 @@ const Landing = () => {
 
         <section className="landing-samples">
           <div className="samples-container">
-            <h2 className="section-title">See Noor AI in action</h2>
+            <h2 className="section-title">See Noor in action</h2>
             <p className="section-subtitle">
               Personalized routines and insights tailored to your unique needs
             </p>
@@ -215,7 +215,7 @@ const Landing = () => {
 
         <section className="landing-benefits">
           <div className="benefits-content">
-            <h2 className="section-title">Why Noor AI?</h2>
+            <h2 className="section-title">Why Noor?</h2>
             <p className="section-subtitle">
               We believe wellness should feel natural, not overwhelming
             </p>
@@ -239,7 +239,7 @@ const Landing = () => {
         <section className="landing-cta">
           <h2 className="cta-title">Ready to feel your best?</h2>
           <p className="cta-subtitle">
-            Join thousands finding balance with Noor AI
+            Join thousands finding balance with Noor
           </p>
         </section>
       </main>
@@ -248,5 +248,4 @@ const Landing = () => {
 };
 
 export default Landing;
-
 

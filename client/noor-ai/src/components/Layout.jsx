@@ -13,8 +13,8 @@ const Layout = ({ children }) => {
       <nav className="navbar">
         <div className="navbar-container">
           <Link to="/" className="navbar-brand">
-            <img src={capybaraImg} alt="Noor AI" className="navbar-logo" />
-            <span>Noor AI</span>
+            <img src={capybaraImg} alt="Noor" className="navbar-logo" />
+            <span>Noor</span>
           </Link>
 
           <div className="navbar-links">
@@ -56,8 +56,8 @@ const Layout = ({ children }) => {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-brand">
-            <img src={capybaraImg} alt="Noor AI" className="footer-logo" />
-            <span>Noor AI</span>
+            <img src={capybaraImg} alt="Noor" className="footer-logo" />
+            <span>Noor</span>
           </div>
           
           <p className="footer-tagline">
@@ -74,7 +74,7 @@ const Layout = ({ children }) => {
           </div>
           
           <div className="footer-bottom">
-            <p>© 2025 Noor AI.</p>
+            <p>© 2025 Noor.</p>
           </div>
         </div>
       </footer>
@@ -83,4 +83,3 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
-
