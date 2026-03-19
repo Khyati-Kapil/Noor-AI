@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Check,
   Droplets,
+  Utensils,
   Scissors,
   BarChart3,
   Calendar,
@@ -19,6 +20,7 @@ import {
 
 import capybaraImg from "../assets/capybara.png";
 import "../styles/landing.css";
+import "../styles/dashboard.css";
 
 const Landing = () => {
   const features = [
@@ -86,12 +88,122 @@ const Landing = () => {
             </Link>
           </div>
 
-          <div className="hero-image-container">
-            <img
-              src={capybaraImg}
-              alt="Noor Mascot"
-              className="hero-capybara"
-            />
+          <div className="hero-visuals">
+            <div className="preview-stack">
+              <div className="preview-glass-label">
+                LIVE PRODUCT PREVIEW
+              </div>
+              <div className="dashboard-preview-embed">
+              <div className="dashboard-shell preview-shell">
+                <header className="dashboard-topbar">
+                  <div className="brand-wrap">
+                    <div className="brand-logo-wrap">
+                      <img src={capybaraImg} alt="Noor Logo" className="header-logo" />
+                    </div>
+                    <div>
+                      <h1 className="header-title">Noor</h1>
+                      <p className="header-subtitle">Skin, body and hair wellness intelligence</p>
+                    </div>
+                  </div>
+                </header>
+
+                <section className="hero-panel">
+                  <div className="hero-copy">
+                    <p className="eyebrow">Personal Wellness Command Center</p>
+                    <h2 className="greeting-text">
+                      Good morning, <span>Khyati</span>
+                    </h2>
+                    <p className="greeting-subtext">
+                      Track your nutrition, hydration, skin care and hair goals from one smart dashboard.
+                    </p>
+
+                    <div className="hero-cta-row">
+                      <div className="quick-action-btn">
+                        <div className="quick-action-icon">
+                          <Utensils size={18} />
+                        </div>
+                        <span className="quick-action-label">Log Meal</span>
+                      </div>
+                      <div className="quick-action-btn">
+                        <div className="quick-action-icon">
+                          <Droplets size={18} />
+                        </div>
+                        <span className="quick-action-label">Add Water</span>
+                      </div>
+                      <div className="quick-action-btn">
+                        <div className="quick-action-icon">
+                          <Sparkles size={18} />
+                        </div>
+                        <span className="quick-action-label">Ask Noor</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="stats-section">
+                  <div className="stats-grid">
+                    <div className="stat-card">
+                      <div className="stat-icon-wrapper flame">
+                        <Flame size={20} />
+                      </div>
+                      <div className="stat-label">Calories</div>
+                      <div className="stat-value">1,820</div>
+                      <div className="stat-goal">/ 2,200 kcal</div>
+                      <div className="progress-container">
+                        <div className="progress-bar">
+                          <div className="progress-fill" style={{ width: "78%" }} />
+                        </div>
+                      </div>
+                      <div className="stat-sub">78% of daily goal</div>
+                    </div>
+
+                    <div className="stat-card">
+                      <div className="stat-icon-wrapper weight">
+                        <Weight size={20} />
+                      </div>
+                      <div className="stat-label">Weight</div>
+                      <div className="stat-value">54</div>
+                      <div className="stat-goal">kg</div>
+                      <div className="stat-sub">Current body snapshot</div>
+                    </div>
+
+                    <div className="stat-card">
+                      <div className="stat-icon-wrapper activity">
+                        <Activity size={20} />
+                      </div>
+                      <div className="stat-label">Activity</div>
+                      <div className="stat-value">Moderate</div>
+                      <div className="stat-goal">level</div>
+                      <div className="stat-sub">Movement momentum</div>
+                    </div>
+
+                    <div className="stat-card">
+                      <div className="stat-icon-wrapper water">
+                        <Droplets size={20} />
+                      </div>
+                      <div className="stat-label">Hydration</div>
+                      <div className="stat-value">6</div>
+                      <div className="stat-goal">/ 8 glasses</div>
+                      <div className="progress-container">
+                        <div className="progress-bar">
+                          <div className="progress-fill water-fill" style={{ width: "75%" }} />
+                        </div>
+                      </div>
+                      <div className="stat-sub">75% hydrated</div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              </div>
+            </div>
+
+            <div className="hero-image-container">
+              <img
+                src={capybaraImg}
+                alt="Noor Mascot"
+                className="hero-capybara"
+              />
+            </div>
           </div>
         </section>
 
@@ -248,4 +360,3 @@ const Landing = () => {
 };
 
 export default Landing;
-
