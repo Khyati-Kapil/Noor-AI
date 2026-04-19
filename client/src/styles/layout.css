@@ -6,6 +6,10 @@
   width: 100%;
 }
 
+.layout-landing {
+  min-height: auto;
+}
+
 .navbar {
   background: linear-gradient(135deg, rgba(124, 94, 77, 0.95) 0%, rgba(90, 60, 40, 0.98) 100%);
   padding: 0 20px;
@@ -92,11 +96,19 @@
   width: 100%;
 }
 
+.layout-main-landing {
+  flex: 0;
+}
+
 .footer {
   background: linear-gradient(135deg, #5a3c28 0%, #3d2518 100%);
   color: #fff;
   padding: 50px 20px 20px;
   margin-top: auto;
+}
+
+.footer-landing {
+  margin-top: 0;
 }
 
 .footer-container {
@@ -201,5 +213,4 @@
     gap: 20px;
   }
 }
-
 

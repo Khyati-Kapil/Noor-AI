@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [reply, setReply] = useState('');
   const [loadingMeal, setLoadingMeal] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [greeting, setGreeting] = useState('');
 
@@ -164,14 +165,75 @@ const Dashboard = () => {
   const askNoor = async () => {
     if (!question.trim()) return;
     setLoadingChat(true);
+    setIsStreaming(true);
     setReply('');
 
     try {
-      const res = await api.post('/api/ai/ask', { question }, { headers: getAuthHeader() });
-      setReply(res.data.reply);
+      const response = await fetch(`${api.defaults.baseURL}/api/ai/chat/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+          ...getAuthHeader()
+        },
+        body: JSON.stringify({ question })
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error('Stream request failed');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let finished = false;
+
+      while (!finished) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split('\n\n');
+        buffer = events.pop() || '';
+
+        for (const eventText of events) {
+          const lines = eventText.split('\n');
+          const eventLine = lines.find((line) => line.startsWith('event:'));
+          const dataLine = lines.find((line) => line.startsWith('data:'));
+          if (!eventLine || !dataLine) continue;
+
+          const eventName = eventLine.replace('event:', '').trim();
+          const dataPayload = dataLine.replace('data:', '').trim();
+
+          let parsed = {};
+          try {
+            parsed = JSON.parse(dataPayload);
+          } catch {
+            parsed = {};
+          }
+
+          if (eventName === 'token' && parsed.token) {
+            setReply((prev) => `${prev}${parsed.token}`);
+          }
+
+          if (eventName === 'end') {
+            finished = true;
+            break;
+          }
+
+          if (eventName === 'error') {
+            throw new Error(parsed.message || 'Streaming failed');
+          }
+        }
+      }
     } catch {
-      setReply('Noor is unavailable at the moment.');
+      try {
+        const fallback = await api.post('/api/ai/ask', { question }, { headers: getAuthHeader() });
+        setReply(fallback.data.reply);
+      } catch {
+        setReply('Noor is unavailable at the moment.');
+      }
     } finally {
+      setIsStreaming(false);
       setLoadingChat(false);
     }
   };
@@ -489,6 +551,15 @@ const Dashboard = () => {
                 {loadingChat ? <span className="animate-pulse">...</span> : <Send size={18} />}
               </button>
             </div>
+
+            {isStreaming && (
+              <div className="ai-reply">
+                <strong>
+                  <Sparkles size={16} /> Noor
+                </strong>
+                <p>Typing live...</p>
+              </div>
+            )}
 
             <div className="suggestions-row">
               <button onClick={() => setQuestion('How can I lose weight naturally?')}>How can I lose weight?</button>

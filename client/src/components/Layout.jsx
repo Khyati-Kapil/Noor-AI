@@ -9,8 +9,10 @@ const Layout = ({ children }) => {
 
   const isLoggedIn = !!safeGet("authToken");
 
+  const isLanding = location.pathname === "/";
+
   return (
-    <div className="layout">
+    <div className={`layout${isLanding ? " layout-landing" : ""}`}>
       <nav className="navbar">
         <div className="navbar-container">
           <Link to="/" className="navbar-brand">
@@ -50,11 +52,11 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      <main className="layout-main">
+      <main className={`layout-main${isLanding ? " layout-main-landing" : ""}`}>
         {children}
       </main>
 
-      <footer className="footer">
+      <footer className={`footer${isLanding ? " footer-landing" : ""}`}>
         <div className="footer-container">
           <div className="footer-brand">
             <img src={capybaraImg} alt="Noor" className="footer-logo" />

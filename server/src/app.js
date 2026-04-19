@@ -10,7 +10,6 @@ import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 
-app.disable("x-powered-by");
 app.use(corsConfig);
 app.use(express.json({ limit: "1mb" }));
 
