@@ -1,11 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
+import { Sun, Moon } from "lucide-react";
 import capybaraImg from "../assets/capybara.png";
 import "../styles/layout.css";
 import { safeGet } from "../utils/safeStorage";
+import { useTheme } from "../context/ThemeContext";
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const linkedinUrl = "https://www.linkedin.com/";
+  const { theme, toggleTheme } = useTheme();
 
   const isLoggedIn = !!safeGet("authToken");
 
@@ -48,6 +51,9 @@ const Layout = ({ children }) => {
                 </Link>
               </>
             )}
+            <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle dark mode">
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
           </div>
         </div>
       </nav>

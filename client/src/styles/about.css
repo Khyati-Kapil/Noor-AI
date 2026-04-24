@@ -1,6 +1,28 @@
+:root {
+  --about-bg: linear-gradient(150deg, #f5ece2 0%, #f8f4ef 52%, #edf5f2 100%);
+  --about-card-bg: rgba(255, 255, 255, 0.82);
+  --about-card-border: rgba(255, 255, 255, 0.88);
+  --about-eyebrow: #8b4a2f;
+  --about-title: #302b27;
+  --about-text: #685e56;
+  --about-icon-color: #7d4028;
+  --about-icon-bg: linear-gradient(145deg, #ffe9dc, #ffd7c3);
+}
+
+[data-theme='dark'] {
+  --about-bg: linear-gradient(150deg, #1e1e1e 0%, #121212 52%, #1a1a1a 100%);
+  --about-card-bg: rgba(30, 30, 30, 0.82);
+  --about-card-border: rgba(60, 60, 60, 0.88);
+  --about-eyebrow: #c4a484;
+  --about-title: #e0e0e0;
+  --about-text: #a0a0a0;
+  --about-icon-color: #ffd7c3;
+  --about-icon-bg: linear-gradient(145deg, #3a2e24, #2a221a);
+}
+
 .about-page {
   min-height: 100vh;
-  background: linear-gradient(150deg, #f5ece2 0%, #f8f4ef 52%, #edf5f2 100%);
+  background: var(--about-bg);
   padding: 44px 18px;
 }
 
@@ -14,14 +36,14 @@
 .about-hero {
   border-radius: 22px;
   padding: 28px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-card-border);
   box-shadow: 0 14px 34px rgba(59, 40, 22, 0.1);
 }
 
 .about-eyebrow {
   margin: 0;
-  color: #8b4a2f;
+  color: var(--about-eyebrow);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -30,13 +52,13 @@
 
 .about-hero h1 {
   margin: 8px 0 0;
-  color: #302b27;
+  color: var(--about-title);
   font-size: clamp(1.6rem, 4vw, 2.4rem);
 }
 
 .about-hero p {
   margin: 12px 0 0;
-  color: #685e56;
+  color: var(--about-text);
   line-height: 1.6;
   max-width: 720px;
 }
@@ -50,8 +72,8 @@
 .about-card {
   border-radius: 18px;
   padding: 18px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  background: var(--about-card-bg);
+  border: 1px solid var(--about-card-border);
   box-shadow: 0 10px 24px rgba(58, 39, 21, 0.08);
 }
 
@@ -61,19 +83,19 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  color: #7d4028;
-  background: linear-gradient(145deg, #ffe9dc, #ffd7c3);
+  color: var(--about-icon-color);
+  background: var(--about-icon-bg);
 }
 
 .about-card h3 {
   margin: 10px 0 0;
-  color: #362f2a;
+  color: var(--about-title);
   font-size: 1rem;
 }
 
 .about-card p {
   margin: 8px 0 0;
-  color: #6d6259;
+  color: var(--about-text);
   line-height: 1.5;
   font-size: 0.92rem;
 }

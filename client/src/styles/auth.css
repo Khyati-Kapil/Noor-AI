@@ -1,3 +1,21 @@
+:root {
+  --auth-input-bg: white;
+  --auth-input-text: #333;
+  --auth-next-btn-bg: white;
+  --auth-next-btn-hover: #fff5e6;
+  --auth-glass-card-bg: rgba(255, 255, 255, 0.12);
+  --auth-glass-card-border: rgb(255, 255, 255);
+}
+
+[data-theme='dark'] {
+  --auth-input-bg: #2a2a2a;
+  --auth-input-text: #e0e0e0;
+  --auth-next-btn-bg: #2a2a2a;
+  --auth-next-btn-hover: #3a3a3a;
+  --auth-glass-card-bg: rgba(0, 0, 0, 0.4);
+  --auth-glass-card-border: rgba(255, 255, 255, 0.2);
+}
+
 body {
   background: linear-gradient(rgba(33, 16, 0, 0.675), rgba(0,0,0,0.9)), url('../assets/ab0cb640d03e26f6627ca703a4c21acf.jpg');
 }
@@ -37,7 +55,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 900px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--auth-glass-card-bg);
   backdrop-filter: blur(20px);
   border-radius: 40px;
   padding: 40px;
@@ -45,7 +63,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 25px;
-  border: 3px solid rgb(255, 255, 255);
+  border: 3px solid var(--auth-glass-card-border);
   box-shadow: 0 0 15px rgb(255, 221, 198),
               0 0 30px rgb(255, 214, 178),
               inset 0 0 20px rgba(255, 220, 186, 1);
@@ -123,8 +141,8 @@ input, select {
   padding: 2px 5px;
   border-radius: 12px;
   border: none;
-  background: white;
-  color: #333;
+  background: var(--auth-input-bg);
+  color: var(--auth-input-text);
   width: 100%;
   margin: 10px 10px;
   box-sizing: border-box;
@@ -197,7 +215,7 @@ input, select {
   gap: 10px;
   cursor: pointer;
   font-size: 13px;
-  color: #333;
+  color: var(--text-inverse);
   padding: 5px;
   transition: transform 0.1s ease;
 }
@@ -222,7 +240,7 @@ input, select {
 .full-span { grid-column: span 2; }
 
 .next-btn {
-  background: white;
+  background: var(--auth-next-btn-bg);
   padding: 15px 50px;
   border-radius: 30px;
   border: none;
@@ -235,7 +253,7 @@ input, select {
 }
 
 .next-btn:hover:not(:disabled) {
-  background: #fff5e6;
+  background: var(--auth-next-btn-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }

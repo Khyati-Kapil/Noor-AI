@@ -1,3 +1,36 @@
+:root {
+  --bg-primary: #fdfbf7;
+  --bg-secondary: #f5e6d3;
+  --text-primary: #333;
+  --text-secondary: #888;
+  --text-muted: #6f645c;
+  --accent-primary: #7c5e4d;
+  --accent-hover: #5a3c28;
+  --border-color: #f0edea;
+  
+  /* Additional colors extracted from other files */
+  --bg-gradient-start: #5a3c28;
+  --bg-gradient-end: #3d2518;
+  --card-bg: #ffffff;
+  --text-inverse: #ffffff;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #8a8a8a;
+  --accent-primary: #a37c67;
+  --accent-hover: #c4a484;
+  --border-color: #333333;
+  
+  --bg-gradient-start: #1e1e1e;
+  --bg-gradient-end: #121212;
+  --card-bg: #1e1e1e;
+  --text-inverse: #121212;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,19 +45,19 @@ body {
   font-family: 'Inter', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #333;
-  background-color: #fdfbf7;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
   overflow-x: hidden;
 }
 
 a {
   font-weight: 500;
-  color: #7c5e4d;
+  color: var(--accent-primary);
   text-decoration: none;
 }
 
 a:hover {
-  color: #5a3c28;
+  color: var(--accent-hover);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -39,19 +72,19 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #7c5e4d;
-  color: white;
+  background-color: var(--accent-primary);
+  color: var(--text-inverse);
   cursor: pointer;
   transition: all 0.25s;
 }
 
 button:hover {
-  background-color: #5a3c28;
+  background-color: var(--accent-hover);
 }
 
 button:focus,
 button:focus-visible {
-  outline: 2px solid #7c5e4d;
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 

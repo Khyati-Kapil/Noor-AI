@@ -1,11 +1,22 @@
 :root {
-    --noor-bg: #fdfbf7;
-    --noor-brown: #4a3728;
-    --noor-light-brown: #8c7e71;
-    --noor-accent: #7c5e4d;
-    --noor-card-bg: #ffffff;
-    --noor-border: #f0edea;
-  }
+    --noor-bg: var(--bg-primary, #fdfbf7);
+    --noor-brown: var(--text-primary, #4a3728);
+    --noor-light-brown: var(--text-secondary, #8c7e71);
+    --noor-accent: var(--accent-primary, #7c5e4d);
+    --noor-card-bg: var(--card-bg, #ffffff);
+    --noor-border: var(--border-color, #f0edea);
+    --noor-glow-1: #f5e6d3;
+    --noor-glow-2: #e9dfd3;
+    --noor-sample-gradient: linear-gradient(309deg, rgba(102, 62, 17, 1) 13%, rgb(255, 229, 199) 59%, rgb(249, 225, 209) 100%);
+    --noor-glass-bg: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme='dark'] {
+    --noor-glow-1: #3a2e24;
+    --noor-glow-2: #2a221a;
+    --noor-sample-gradient: linear-gradient(309deg, rgba(40, 25, 10, 1) 13%, rgb(90, 70, 50) 59%, rgb(60, 45, 35) 100%);
+    --noor-glass-bg: rgba(30, 30, 30, 0.45);
+}
   
   
   @keyframes fadeIn {
@@ -142,13 +153,13 @@
   }
   
   .landing-glow-1 {
-    background: #f5e6d3;
+    background: var(--noor-glow-1);
     top: -10%;
     left: -10%;
   }
   
   .landing-glow-2 {
-    background: #e9dfd3;
+    background: var(--noor-glow-2);
     bottom: -10%;
     right: -10%;
     animation-delay: 3s;
@@ -199,7 +210,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #fff;
+    background: var(--noor-card-bg);
     border: 1px solid var(--noor-border);
     padding: 8px 16px;
     border-radius: 100px;
@@ -224,7 +235,7 @@
   }
   
   .hero-highlight {
-    color: #c4a484; 
+    color: var(--accent-hover);
     animation: pulse 3s ease-in-out infinite;
     display: inline-block;
   }
@@ -347,7 +358,7 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--noor-brown);
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--noor-glass-bg);
     border: 1px solid rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -443,7 +454,7 @@
   .feature-icon {
     width: 50px;
     height: 50px;
-    background: #fdfbf7;
+    background: var(--noor-bg);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -455,7 +466,7 @@
   
   .feature-card:hover .feature-icon {
     transform: scale(1.1) rotate(5deg);
-    background: #f5e6d3;
+    background: var(--noor-glow-1);
   }
 
   .landing-samples {
@@ -465,12 +476,7 @@
   
   
   .samples-container {
-    background: linear-gradient(
-      309deg,
-      rgba(102, 62, 17, 1) 13%,
-      rgb(255, 229, 199) 59%,
-      rgb(249, 225, 209) 100%
-    );
+    background: var(--noor-sample-gradient);
     border-radius: 32px;
     padding: 50px;
     max-width: 900px;
@@ -520,7 +526,7 @@
   .sample-icon {
     width: 40px;
     height: 40px;
-    background: #fdfbf7;
+    background: var(--noor-bg);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -575,7 +581,7 @@
   }
   
   .routine-tip:hover {
-    background: #f5e6d3;
+    background: var(--noor-glow-1);
   }
 
   .dashboard-preview .sample-content {
@@ -601,7 +607,7 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: #fdfbf7;
+    background: var(--noor-bg);
     border-radius: 20px;
     font-size: 0.85rem;
     color: var(--noor-brown);
@@ -611,7 +617,7 @@
   
   .stat-pill:hover {
     transform: scale(1.05);
-    background: #f5e6d3;
+    background: var(--noor-glow-1);
   }
 
   .stat-pill svg {
@@ -633,7 +639,7 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    background: white;
+    background: var(--noor-card-bg);
     border: 1px solid var(--noor-border);
     border-radius: 12px;
     font-size: 0.85rem;
@@ -669,14 +675,14 @@
 
   .progress-bar {
     height: 8px;
-    background: #f0edea;
+    background: var(--noor-border);
     border-radius: 4px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #7c5e4d 0%, #c4a484 100%);
+    background: linear-gradient(90deg, var(--noor-accent) 0%, var(--accent-hover) 100%);
     border-radius: 4px;
     transition: width 0.5s ease;
     animation: shimmer 2s linear infinite;
@@ -704,7 +710,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px 20px;
-    background: white;
+    background: var(--noor-card-bg);
     border: 1px solid var(--noor-border);
     border-radius: 12px;
     margin-bottom: 12px;
@@ -725,7 +731,7 @@
   }
   
   .benefit-check {
-    color: #7c5e4d;
+    color: var(--noor-accent);
     animation: pulse 2s ease-in-out infinite;
   }
   
@@ -750,7 +756,7 @@
   
   .btn-noor {
     background: var(--noor-brown);
-    color: white;
+    color: var(--text-inverse);
     border: none;
     padding: 12px 24px;
     border-radius: 100px;
@@ -793,7 +799,7 @@
   
   .btn-subtle:hover {
     background: var(--noor-brown);
-    color: white;
+    color: var(--text-inverse);
     border-color: var(--noor-brown);
   }
   
