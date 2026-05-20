@@ -154,12 +154,6 @@ Base URL: `http://localhost:5000`
 - Fallback logic returns deterministic wellness guidance when AI is unavailable.
 - Streaming endpoint sends incremental tokens over SSE for real-time response rendering.
 
-## Deployment Notes
-
-- Frontend can be deployed on Vercel.
-- Backend can be deployed on Render.
-- If Vercel root directory error appears, set Root Directory to `client`.
-- Ensure frontend API base URL points to deployed backend.
 
 ## Scripts
 
@@ -172,19 +166,4 @@ Base URL: `http://localhost:5000`
 - `npm run dev` - start backend with nodemon
 - `npm start` - start backend with node
 
-## Current Limitations
 
-- Single primary user model; data model can be expanded for production use cases.
-- Background jobs/queues are not yet added.
-- Advanced analytics module is not yet implemented.
-
-## Roadmap
-
-- Weekly analytics with trend charts and streak metrics
-- RAG-based wellness knowledge module with source-grounded responses
-- Better observability (logs, metrics, tracing)
-- Test coverage (unit + integration + E2E)
-
-## License
-
-This project is currently unlicensed. Add a license file if you plan to distribute or open source it formally.
